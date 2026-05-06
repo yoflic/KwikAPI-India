@@ -3,7 +3,8 @@
 > Official multi-language code samples for the **KwikAPI v3.0.1** platform by [Yoflic India Pvt Ltd](https://www.kwikapi.com).  
 > Instantly integrate India's bill payments, prepaid/DTH recharges, BBPS utility payments, payouts, and penny-drop verification and more.
 
-📖 **[API Reference — All 17 APIs with parameters, response shapes & examples](./API-REFERENCE.md)**  
+📖 **[API Reference MD](./API-REFERENCE.md)** &nbsp;·&nbsp; [Recharge Flow](./RECHARGE-FLOW.md) &nbsp;·&nbsp; [BBPS Payment Flow](./BBPS-PAYMENT-FLOW.md)
+
 🌐 **[API Reference HTML](./docs/API-REFERENCE.html)** &nbsp;·&nbsp; [Recharge Flow](./docs/RECHARGE-FLOW.html) &nbsp;·&nbsp; [BBPS Payment Flow](./docs/BBPS-PAYMENT-FLOW.html)
 
 ---
