@@ -47,20 +47,19 @@ def payout(api_key: str = 'YOUR_API_KEY', account_no: str = 'BENEFICIARY_ACCOUNT
         dict: Parsed JSON response from KwikAPI.
 
     Raises:
-        KwikAPIError: If the API returns success=false.
+        KwikAPIError: If the API returns a non-SUCCESS status.
         requests.HTTPError: On non-2xx HTTP status.
-        requests.Timeout: If the request exceeds the timeout.
     """
     url = BASE_URL + "/api/v2/payments/index.php"
 
     with requests.Session() as session:
         session.headers.update({"Accept": "application/json"})
-        response = session.post(url, data={'api_key': api_key, 'account_no': account_no, 'amount': amount, 'order_id': order_id, 'ifsc_code': ifsc_code, 'bene_name': bene_name}, timeout=60)
+        response = session.post(url, data={'api_key': api_key, 'account_no': account_no, 'amount': amount, 'order_id': order_id, 'ifsc_code': ifsc_code, 'bene_name': bene_name})
 
     response.raise_for_status()
     data = response.json()
 
-    if not data.get("success"):
+    if data.get("status") != "SUCCESS":
         raise KwikAPIError(data.get("message", "Unknown API error"))
 
     return data

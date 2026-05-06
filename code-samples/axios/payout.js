@@ -25,6 +25,12 @@ const BASE_URL = 'https://uat.kwikapi.com'; // Switch to https://www.kwikapi.com
 
 /**
  * Payout (Money Transfer)
+ * @param {string} api_key - (required) Your KwikAPI API key
+ * @param {string} account_no - (required) Beneficiary bank account number
+ * @param {number} amount - (required) Transfer amount in INR
+ * @param {string} order_id - (required) Your unique order ID
+ * @param {string} ifsc_code - (required) Beneficiary bank IFSC code
+ * @param {string} bene_name - (required) Beneficiary full name
  * @returns {Promise<object>} Parsed JSON response
  * @throws {Error} on HTTP or API-level error
  */
@@ -40,11 +46,10 @@ async function payout(api_key = 'YOUR_API_KEY', account_no = 'BENEFICIARY_ACCOUN
   });
   const response = await axios.post(`${BASE_URL}/api/v2/payments/index.php`, params, {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' },
-    timeout: 60000,
   });
 
     const data = response.data;
-    if (!data.success) {
+    if (data.status !== 'SUCCESS') {
       throw new Error(`API error: ${data.message || 'Unknown error'}`);
     }
 

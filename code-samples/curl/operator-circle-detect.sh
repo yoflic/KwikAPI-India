@@ -9,6 +9,10 @@
 # Rate Limit: Per account
 # NOTE: Supports MNP and circle-changed numbers.
 #
+# Parameters:
+#   api_key            (required) Your KwikAPI API key
+#   number             (required) 10-digit Indian mobile number
+#
 # Environment:
 #   UAT (testing) : https://uat.kwikapi.com
 #   Production    : https://www.kwikapi.com  (change BASE_URL below)
@@ -29,7 +33,7 @@ kwik_operator_circle_detect() {
     curl -s -X POST \
   -F 'api_key=YOUR_API_KEY' \
   -F 'number=9999999999' \
-  '"${{BASE_URL}}{api["path"]}"'
+  "${BASE_URL}/api/v2/operator_fetch_v2.php"
   )
 
   echo "$response" | python3 -m json.tool 2>/dev/null || echo "$response"

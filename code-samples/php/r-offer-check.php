@@ -49,7 +49,6 @@ function kwik_r_offer_check(string $api_key = 'YOUR_API_KEY', string $opid = 'OP
         'mobile' => $mobile,
         ]),
         CURLOPT_SSL_VERIFYPEER => true,
-        CURLOPT_TIMEOUT        => 30,
         CURLOPT_HTTPHEADER     => ['Accept: application/json'],
     ]);
 

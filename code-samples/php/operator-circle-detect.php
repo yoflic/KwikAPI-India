@@ -46,7 +46,6 @@ function kwik_operator_circle_detect(string $api_key = 'YOUR_API_KEY', string $n
         'number' => $number,
         ]),
         CURLOPT_SSL_VERIFYPEER => true,
-        CURLOPT_TIMEOUT        => 30,
         CURLOPT_HTTPHEADER     => ['Accept: application/json'],
     ]);
 

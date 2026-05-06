@@ -47,13 +47,12 @@ def bank_account_verify(api_key: str = 'YOUR_API_KEY', number: str = 'ACCOUNT_NU
     Raises:
         KwikAPIError: If the API returns success=false.
         requests.HTTPError: On non-2xx HTTP status.
-        requests.Timeout: If the request exceeds the timeout.
     """
     url = BASE_URL + "/api/v2/dmt/account_validate_route2"
 
     with requests.Session() as session:
         session.headers.update({"Accept": "application/json"})
-        response = session.post(url, data={'api_key': api_key, 'number': number, 'account': account, 'ifsc': ifsc, 'order_id': order_id}, timeout=30)
+        response = session.post(url, data={'api_key': api_key, 'number': number, 'account': account, 'ifsc': ifsc, 'order_id': order_id})
 
     response.raise_for_status()
     data = response.json()

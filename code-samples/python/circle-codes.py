@@ -41,20 +41,19 @@ def circle_codes(api_key: str = 'YOUR_API_KEY') -> dict[str, Any]:
         dict: Parsed JSON response from KwikAPI.
 
     Raises:
-        KwikAPIError: If the API returns success=false.
+        KwikAPIError: If the API response wrapper is missing.
         requests.HTTPError: On non-2xx HTTP status.
-        requests.Timeout: If the request exceeds the timeout.
     """
     url = BASE_URL + "/api/v2/circle_codes.php"
 
     with requests.Session() as session:
         session.headers.update({"Accept": "application/json"})
-        response = session.get(url, params={'api_key': api_key}, timeout=30)
+        response = session.get(url, params={'api_key': api_key})
 
     response.raise_for_status()
     data = response.json()
 
-    if not data.get("success"):
+    if "response" not in data:
         raise KwikAPIError(data.get("message", "Unknown API error"))
 
     return data

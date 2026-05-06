@@ -31,7 +31,6 @@ function ipDetect() {
     method:   'GET',
     data:     data,
     dataType: 'json',
-    timeout:  10000,
   })
   .done(function (response) {
     if (!response.success) {

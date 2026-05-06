@@ -45,7 +45,6 @@ function kwik_biller_list(string $apiKey = KWIKAPI_KEY): array
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_HTTPGET        => true,
         CURLOPT_SSL_VERIFYPEER => true,
-        CURLOPT_TIMEOUT        => 30,
         CURLOPT_HTTPHEADER     => ['Accept: application/json'],
     ]);
 
@@ -70,7 +69,7 @@ function kwik_biller_list(string $apiKey = KWIKAPI_KEY): array
 try {
     $result = kwik_biller_list(KWIKAPI_KEY);
 
-    if ($result['success'] ?? false) {
+    if (($result['status'] ?? '') === 'SUCCESS') {
         echo "Success: " . ($result['message'] ?? 'OK') . PHP_EOL;
         echo json_encode($result, JSON_PRETTY_PRINT) . PHP_EOL;
     } else {

@@ -29,7 +29,13 @@ const BASE_URL = 'https://uat.kwikapi.com'; // Switch to https://www.kwikapi.com
 
 /**
  * Bill Fetch
- * @param  {api_key = 'YOUR_API_KEY', number = 'CONSUMER_NUMBER', amount = '0', opid = 'OPERATOR_ID', order_id = 'YOUR_ORDER_ID', mobile = '9999999999'}
+ * @param {string} api_key - (required) Your KwikAPI API key
+ * @param {string} number - (required) Consumer number / account number / registered mobile
+ * @param {number} amount - (optional) Pre-filled amount (pass 0 if unknown)
+ * @param {int} opid - (required) Operator ID from Biller List API
+ * @param {string} order_id - (required) Your unique order/reference ID
+ * @param {string} opt1-opt10 - (optional) Additional operator-specific fields (see Biller Details)
+ * @param {string} mobile - (optional) Customer mobile number for SMS confirmation
  * @returns {Promise<object>}
  */
 async function billFetch(api_key = 'YOUR_API_KEY', number = 'CONSUMER_NUMBER', amount = '0', opid = 'OPERATOR_ID', order_id = 'YOUR_ORDER_ID', mobile = '9999999999') {
@@ -53,7 +59,7 @@ async function billFetch(api_key = 'YOUR_API_KEY', number = 'CONSUMER_NUMBER', a
 
     const data = await response.json();
 
-    if (!data.success) {
+    if (data.status !== 'SUCCESS') {
       throw new Error(`API error: ${data.message || 'Unknown error'}`);
     }
 

@@ -47,20 +47,19 @@ def bill_fetch(api_key: str = 'YOUR_API_KEY', number: str = 'CONSUMER_NUMBER', a
         dict: Parsed JSON response from KwikAPI.
 
     Raises:
-        KwikAPIError: If the API returns success=false.
+        KwikAPIError: If the API returns a non-SUCCESS status.
         requests.HTTPError: On non-2xx HTTP status.
-        requests.Timeout: If the request exceeds the timeout.
     """
     url = BASE_URL + "/api/v2/bills/validation.php"
 
     with requests.Session() as session:
         session.headers.update({"Accept": "application/json"})
-        response = session.get(url, params={'api_key': api_key, 'number': number, 'amount': amount, 'opid': opid, 'order_id': order_id, 'mobile': mobile}, timeout=30)
+        response = session.get(url, params={'api_key': api_key, 'number': number, 'amount': amount, 'opid': opid, 'order_id': order_id, 'mobile': mobile})
 
     response.raise_for_status()
     data = response.json()
 
-    if not data.get("success"):
+    if data.get("status") != "SUCCESS":
         raise KwikAPIError(data.get("message", "Unknown API error"))
 
     return data

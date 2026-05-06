@@ -53,7 +53,6 @@ function kwik_bill_fetch(string $apiKey = KWIKAPI_KEY, string $number = 'CONSUME
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_HTTPGET        => true,
         CURLOPT_SSL_VERIFYPEER => true,
-        CURLOPT_TIMEOUT        => 30,
         CURLOPT_HTTPHEADER     => ['Accept: application/json'],
     ]);
 
@@ -78,7 +77,7 @@ function kwik_bill_fetch(string $apiKey = KWIKAPI_KEY, string $number = 'CONSUME
 try {
     $result = kwik_bill_fetch(KWIKAPI_KEY, 'CONSUMER_NUMBER', '0', 'OPERATOR_ID', 'YOUR_ORDER_ID', '9999999999');
 
-    if ($result['success'] ?? false) {
+    if (($result['status'] ?? '') === 'SUCCESS') {
         echo "Success: " . ($result['message'] ?? 'OK') . PHP_EOL;
         echo json_encode($result, JSON_PRETTY_PRINT) . PHP_EOL;
     } else {

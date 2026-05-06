@@ -23,6 +23,7 @@ const BASE_URL = 'https://uat.kwikapi.com'; // Switch to https://www.kwikapi.com
 
 /**
  * Service Category List
+ * @param {string} api_key - (required) Your KwikAPI API key
  * @returns {Promise<object>} Parsed JSON response
  * @throws {Error} on HTTP or API-level error
  */
@@ -33,7 +34,6 @@ async function serviceCategoryList(api_key = 'YOUR_API_KEY') {
   });
   const response = await axios.post(`${BASE_URL}/api/v2/Service-Category-List.php`, params, {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' },
-    timeout: 30000,
   });
 
     const data = response.data;

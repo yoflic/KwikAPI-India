@@ -19,9 +19,12 @@ const BASE_URL = 'https://uat.kwikapi.com'; // Switch to https://www.kwikapi.com
 
 /**
  * Mobile Recharge Plans
+ * @param {string} api_key - (required) Your KwikAPI API key
+ * @param {string} state_code - (required) Telecom circle code from Circle Codes API
+ * @param {int} opid - (required) Operator ID from Biller List API
  * @returns {jQuery.Deferred} Resolves with parsed JSON response
  */
-function mobileRechargePlans(api_key = 'YOUR_API_KEY', state_code = 'MH', opid = '1') {
+function mobileRechargePlans(api_key = 'YOUR_API_KEY', state_code = '4', opid = '1') {
   const data = { api_key: api_key, state_code: state_code, opid: opid };
 
   return $.ajax({
@@ -29,7 +32,6 @@ function mobileRechargePlans(api_key = 'YOUR_API_KEY', state_code = 'MH', opid =
     method:   'POST',
     data:     data,
     dataType: 'json',
-    timeout:  30000,
   })
   .done(function (response) {
     if (!response.success) {

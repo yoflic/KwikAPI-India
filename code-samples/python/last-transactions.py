@@ -40,21 +40,20 @@ def last_transactions(api_key: str = 'YOUR_API_KEY') -> dict[str, Any]:
         dict: Parsed JSON response from KwikAPI.
 
     Raises:
-        KwikAPIError: If the API returns success=false.
+        KwikAPIError: If the response is not a list.
         requests.HTTPError: On non-2xx HTTP status.
-        requests.Timeout: If the request exceeds the timeout.
     """
     url = BASE_URL + "/api/v2/transactions.php"
 
     with requests.Session() as session:
         session.headers.update({"Accept": "application/json"})
-        response = session.get(url, params={'api_key': api_key}, timeout=30)
+        response = session.get(url, params={'api_key': api_key})
 
     response.raise_for_status()
     data = response.json()
 
-    if not data.get("success"):
-        raise KwikAPIError(data.get("message", "Unknown API error"))
+    if not isinstance(data, list):
+        raise KwikAPIError(data.get("message", "Unexpected response format"))
 
     return data
 

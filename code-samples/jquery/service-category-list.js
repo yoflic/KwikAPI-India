@@ -19,6 +19,7 @@ const BASE_URL = 'https://uat.kwikapi.com'; // Switch to https://www.kwikapi.com
 
 /**
  * Service Category List
+ * @param {string} api_key - (required) Your KwikAPI API key
  * @returns {jQuery.Deferred} Resolves with parsed JSON response
  */
 function serviceCategoryList(api_key = 'YOUR_API_KEY') {
@@ -29,7 +30,6 @@ function serviceCategoryList(api_key = 'YOUR_API_KEY') {
     method:   'POST',
     data:     data,
     dataType: 'json',
-    timeout:  30000,
   })
   .done(function (response) {
     if (!response.success) {

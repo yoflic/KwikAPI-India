@@ -27,7 +27,11 @@ const BASE_URL = 'https://uat.kwikapi.com'; // Switch to https://www.kwikapi.com
 
 /**
  * Bank Account Verification
- * @param  {api_key = 'YOUR_API_KEY', number = 'ACCOUNT_NUMBER', account = 'ACCOUNT_NUMBER', ifsc = 'SBIN0001234', order_id = 'YOUR_UNIQUE_ORDER_ID'}
+ * @param {string} api_key - (required) Your KwikAPI API key
+ * @param {string} number - (required) Beneficiary bank account number
+ * @param {string} account - (required) Same as number (required field alias)
+ * @param {string} ifsc - (optional) IFSC code for faster verification
+ * @param {string} order_id - (required) Your unique order ID for this verification
  * @returns {Promise<object>}
  */
 async function bankAccountVerify(api_key = 'YOUR_API_KEY', number = 'ACCOUNT_NUMBER', account = 'ACCOUNT_NUMBER', ifsc = 'SBIN0001234', order_id = 'YOUR_UNIQUE_ORDER_ID') {

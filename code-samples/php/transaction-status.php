@@ -43,7 +43,6 @@ function kwik_transaction_status(string $apiKey = KWIKAPI_KEY, string $order_id 
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_HTTPGET        => true,
         CURLOPT_SSL_VERIFYPEER => true,
-        CURLOPT_TIMEOUT        => 30,
         CURLOPT_HTTPHEADER     => ['Accept: application/json'],
     ]);
 
@@ -68,7 +67,7 @@ function kwik_transaction_status(string $apiKey = KWIKAPI_KEY, string $order_id 
 try {
     $result = kwik_transaction_status(KWIKAPI_KEY, 'YOUR_ORDER_ID');
 
-    if ($result['success'] ?? false) {
+    if (isset($result['response'])) {
         echo "Success: " . ($result['message'] ?? 'OK') . PHP_EOL;
         echo json_encode($result, JSON_PRETTY_PRINT) . PHP_EOL;
     } else {

@@ -23,7 +23,7 @@ const BASE_URL = 'https://uat.kwikapi.com'; // Switch to https://www.kwikapi.com
 
 /**
  * Circle Codes
- * @param  {api_key = 'YOUR_API_KEY'}
+ * @param {string} api_key - (required) Your KwikAPI API key
  * @returns {Promise<object>}
  */
 async function circleCodes(api_key = 'YOUR_API_KEY') {
@@ -42,7 +42,7 @@ async function circleCodes(api_key = 'YOUR_API_KEY') {
 
     const data = await response.json();
 
-    if (!data.success) {
+    if (!data.response) {
       throw new Error(`API error: ${data.message || 'Unknown error'}`);
     }
 

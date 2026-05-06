@@ -24,6 +24,9 @@ const BASE_URL = 'https://uat.kwikapi.com'; // Switch to https://www.kwikapi.com
 
 /**
  * Biller List
+ * @param {string} api_key - (required) Your KwikAPI API key
+ * @param {string} service - (optional) Filter by service category name (e.g. 'Prepaid')
+ * @param {int} page - (optional) Page number for pagination (default: 1)
  * @returns {Promise<object>} Parsed JSON response
  * @throws {Error} on HTTP or API-level error
  */
@@ -34,11 +37,10 @@ async function billerList(api_key = 'YOUR_API_KEY') {
       api_key: api_key,
     },
     headers: { Accept: 'application/json' },
-    timeout: 30000,
   });
 
     const data = response.data;
-    if (!data.success) {
+    if (data.status !== 'SUCCESS') {
       throw new Error(`API error: ${data.message || 'Unknown error'}`);
     }
 

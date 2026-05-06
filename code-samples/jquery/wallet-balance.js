@@ -19,6 +19,7 @@ const BASE_URL = 'https://uat.kwikapi.com'; // Switch to https://www.kwikapi.com
 
 /**
  * Wallet Balance
+ * @param {string} api_key - (required) Your KwikAPI API key
  * @returns {jQuery.Deferred} Resolves with parsed JSON response
  */
 function walletBalance(api_key = 'YOUR_API_KEY') {
@@ -29,10 +30,9 @@ function walletBalance(api_key = 'YOUR_API_KEY') {
     method:   'GET',
     data:     data,
     dataType: 'json',
-    timeout:  30000,
   })
   .done(function (response) {
-    if (!response.success) {
+    if (!response.response) {
       throw new Error('API error: ' + (response.message || 'Unknown error'));
     }
     return response;

@@ -10,6 +10,9 @@
 # NOTE: No authentication required.
 # NOTE: Run on your production server for accurate IP detection.
 #
+# Parameters:
+#   (none)
+#
 # Environment:
 #   UAT (testing) : https://uat.kwikapi.com
 #   Production    : https://www.kwikapi.com  (change BASE_URL below)
@@ -27,7 +30,7 @@ API_KEY="YOUR_API_KEY"
 kwik_ip_detect() {
   local response
   response=$(
-    curl -s '"${{BASE_URL}}{api["path"]}"'
+    curl -s "${BASE_URL}/api/v2/ip_detect.php"
   )
 
   echo "$response" | python3 -m json.tool 2>/dev/null || echo "$response"

@@ -9,6 +9,11 @@
 # Rate Limit: 20 / day
 # NOTE: Allowed for syncing/caching purposes only.
 #
+# Parameters:
+#   api_key            (required) Your KwikAPI API key
+#   service            (optional) Filter by service category name (e.g. 'Prepaid')
+#   page               (optional) Page number for pagination (default: 1)
+#
 # Environment:
 #   UAT (testing) : https://uat.kwikapi.com
 #   Production    : https://www.kwikapi.com  (change BASE_URL below)
@@ -28,7 +33,7 @@ kwik_biller_list() {
   response=$(
     curl -s -G \
   --data-urlencode 'api_key=YOUR_API_KEY' \
-  '"${{BASE_URL}}{api["path"]}"'
+  "${BASE_URL}/api/v2/operator_codes.php"
   )
 
   echo "$response" | python3 -m json.tool 2>/dev/null || echo "$response"

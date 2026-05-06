@@ -24,7 +24,8 @@ const BASE_URL = 'https://uat.kwikapi.com'; // Switch to https://www.kwikapi.com
 
 /**
  * Operator & Circle Detect
- * @param  {api_key = 'YOUR_API_KEY', number = '9999999999'}
+ * @param {string} api_key - (required) Your KwikAPI API key
+ * @param {string} number - (required) 10-digit Indian mobile number
  * @returns {Promise<object>}
  */
 async function operatorCircleDetect(api_key = 'YOUR_API_KEY', number = '9999999999') {

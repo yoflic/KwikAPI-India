@@ -3,6 +3,9 @@
 > Official multi-language code samples for the **KwikAPI v3.0.1** platform by [Yoflic India Pvt Ltd](https://www.kwikapi.com).  
 > Instantly integrate India's bill payments, prepaid/DTH recharges, BBPS utility payments, payouts, and penny-drop verification and more.
 
+📖 **[API Reference — All 17 APIs with parameters, response shapes & examples](./API-REFERENCE.md)**  
+🌐 **[API Reference HTML](./API-REFERENCE.html)**
+
 ---
 
 ## Quick Start
@@ -78,8 +81,8 @@ All APIs (except IP Detect) require an `api_key`:
 
 | File | Endpoint | Method | Description |
 |------|----------|--------|-------------|
-| `prepaid-dth-recharge` | `/api/v2/recharge.php` | GET | Prepaid mobile / DTH / Datacard recharge ⚠️ timeout=0 |
-| `utility-payments` | `/api/v2/bills/payments.php` | GET | All BBPS utility bill payments ⚠️ timeout=0 |
+| `prepaid-dth-recharge` | `/api/v2/recharge.php` | GET | Prepaid mobile / DTH / Datacard recharge |
+| `utility-payments` | `/api/v2/bills/payments.php` | GET | All BBPS utility bill payments |
 | `payout` | `/api/v2/payments/index.php` | POST | Bank account payout via IMPS/NEFT ⚠️ IP whitelist required |
 
 ### Verification APIs
@@ -158,7 +161,7 @@ Every sample follows these conventions for drop-in SDK use:
 1. operator-circle-detect   →  get opid + state_code for mobile number
 2. mobile-recharge-plans    →  show plans to user
 3. wallet-balance           →  verify sufficient balance
-4. prepaid-dth-recharge     →  initiate recharge (HTTP timeout = 0)
+4. prepaid-dth-recharge     →  initiate recharge
 5. transaction-status       →  ALWAYS verify final status by order_id
 ```
 
@@ -167,7 +170,7 @@ Every sample follows these conventions for drop-in SDK use:
 1. biller-details           →  confirm bill-fetch support + required params
 2. bill-fetch               →  fetch outstanding due amount
 3. wallet-balance           →  verify sufficient balance
-4. utility-payments         →  process payment (HTTP timeout = 0, opt8 = "Bills")
+4. utility-payments         →  process payment (opt8 = "Bills")
 5. transaction-status       →  ALWAYS verify final status
 ```
 
@@ -218,7 +221,6 @@ On failure:
 ## Payment API Critical Notes
 
 > ⚠️ **Prepaid/DTH Recharge & Utility Payments:**
-> - Set HTTP client timeout to **0 (no timeout)** — API processes synchronously
 > - **Always call Transaction Status** after every payment, regardless of response
 > - `order_id` must be **globally unique** per transaction — never reuse
 

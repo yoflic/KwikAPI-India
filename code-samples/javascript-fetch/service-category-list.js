@@ -22,7 +22,7 @@ const BASE_URL = 'https://uat.kwikapi.com'; // Switch to https://www.kwikapi.com
 
 /**
  * Service Category List
- * @param  {api_key = 'YOUR_API_KEY'}
+ * @param {string} api_key - (required) Your KwikAPI API key
  * @returns {Promise<object>}
  */
 async function serviceCategoryList(api_key = 'YOUR_API_KEY') {

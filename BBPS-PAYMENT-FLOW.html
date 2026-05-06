@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BBPS Bill Payment Flow — KwikAPI Integration Guide</title>
+<style>
+  :root {
+    --brand:       #7c3aed;
+    --brand-dark:  #5b21b6;
+    --brand-light: #ede9fe;
+    --setup-bg:    #ede9fe;
+    --setup-border:#7c3aed;
+    --live-bg:     #fef3c7;
+    --live-border: #d97706;
+    --live-accent: #d97706;
+    --warn:        #e07a00;
+    --warn-bg:     #fff4e0;
+    --danger:      #c0392b;
+    --success:     #1db87e;
+    --code-bg:     #1e2530;
+    --code-text:   #d4e0f0;
+    --note-bg:     #fffbe6;
+    --note-border: #f0c040;
+    --text:        #1a2233;
+    --muted:       #5a6a82;
+    --border:      #d0dae8;
+    --bg:          #f5f4fb;
+    --card:        #ffffff;
+    --step-num:    #ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.65; font-size: 15px; }
+
+  /* ─── HEADER ─── */
+  header { background: linear-gradient(135deg, #3b0764 0%, #7c3aed 100%); color: #fff; padding: 48px 24px 40px; text-align: center; position: relative; overflow: hidden; }
+  header::before { content: ''; position: absolute; inset: 0; background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+  header .badge { display: inline-block; background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; padding: 4px 14px; font-size: 12px; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 16px; }
+  header h1 { font-size: 2.1rem; font-weight: 700; margin-bottom: 12px; position: relative; }
+  header p { font-size: 1rem; opacity: .85; max-width: 680px; margin: 0 auto; position: relative; }
+  .header-tags { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; position: relative; }
+  .header-tags span { background: rgba(255,255,255,0.15); border-radius: 12px; padding: 3px 12px; font-size: 12px; }
+
+  /* ─── CONTAINER ─── */
+  .container { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  /* ─── PHASE HEADERS ─── */
+  .phase-header { display: flex; align-items: center; gap: 14px; margin: 48px 0 24px; padding: 16px 24px; border-radius: 10px; }
+  .phase-header.setup { background: var(--setup-bg); border-left: 5px solid var(--setup-border); }
+  .phase-header.live  { background: var(--live-bg);  border-left: 5px solid var(--live-border);  }
+  .phase-icon { font-size: 1.8rem; }
+  .phase-title { font-size: 1.2rem; font-weight: 700; color: var(--brand-dark); }
+  .phase-title.live { color: #92400e; }
+  .phase-sub { font-size: .875rem; color: var(--muted); margin-top: 2px; }
+
+  /* ─── STEP CARDS ─── */
+  .step { background: var(--card); border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.07); margin-bottom: 20px; overflow: hidden; border: 1px solid var(--border); }
+  .step-header { display: flex; align-items: flex-start; gap: 16px; padding: 20px 24px 16px; }
+  .step-num { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .95rem; color: var(--step-num); }
+  .step-num.setup   { background: var(--brand); }
+  .step-num.live    { background: var(--live-accent); }
+  .step-num.optional{ background: #7c8da6; }
+  .step-num.payment { background: #e07a00; }
+  .step-meta { flex: 1; }
+  .step-meta h3 { font-size: 1.05rem; font-weight: 700; color: var(--text); margin-bottom: 4px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .tag { display: inline-block; border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+  .tag.setup    { background: #ede9fe; color: #5b21b6; }
+  .tag.live     { background: #fef3c7; color: #92400e; }
+  .tag.optional { background: #f1f5f9; color: #475569; }
+  .tag.payment  { background: #fff3cd; color: #92400e; }
+  .tag.warning  { background: #fee2e2; color: #991b1b; }
+  .step-api { font-size: .82rem; color: var(--muted); font-family: "SF Mono", "Fira Code", monospace; margin-top: 3px; }
+  .step-meta p { font-size: .9rem; color: var(--muted); margin-top: 6px; }
+
+  .step-body { padding: 0 24px 20px; }
+  .step-desc { font-size: .9rem; color: var(--text); margin-bottom: 14px; }
+
+  /* ─── CODE BLOCKS ─── */
+  .code-block { background: var(--code-bg); color: var(--code-text); border-radius: 8px; padding: 16px 18px; font-family: "SF Mono", "Fira Code", "Consolas", monospace; font-size: .8rem; line-height: 1.7; overflow-x: auto; margin: 12px 0; }
+  .code-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: #6a8caa; margin-bottom: 6px; }
+  .code-kw  { color: #79c0ff; }
+  .code-str { color: #a5d6ff; }
+  .code-cmt { color: #6a8caa; font-style: italic; }
+  .code-key { color: #d2a8ff; }
+  .code-val { color: #c9d1d9; }
+
+  /* ─── NOTE BOXES ─── */
+  .note     { background: var(--note-bg); border-left: 4px solid var(--note-border); border-radius: 0 6px 6px 0; padding: 11px 16px; font-size: .875rem; color: #6b4f00; margin: 12px 0; }
+  .warn-box { background: var(--warn-bg); border-left: 4px solid var(--warn); border-radius: 0 6px 6px 0; padding: 11px 16px; font-size: .875rem; color: #7a4000; margin: 12px 0; }
+  .info-box { background: #ede9fe; border-left: 4px solid #7c3aed; border-radius: 0 6px 6px 0; padding: 11px 16px; font-size: .875rem; color: #3b0764; margin: 12px 0; }
+
+  /* ─── STATUS TABLE ─── */
+  table { width: 100%; border-collapse: collapse; font-size: .875rem; margin: 12px 0; }
+  th { background: #f0f4fa; padding: 9px 14px; text-align: left; font-weight: 600; font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); border-bottom: 2px solid var(--border); }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  .status-badge { display: inline-block; border-radius: 12px; padding: 2px 10px; font-size: .78rem; font-weight: 600; }
+  .s-success { background: #dcfce7; color: #166534; }
+  .s-failure { background: #fee2e2; color: #991b1b; }
+  .s-pending { background: #fff3cd; color: #92400e; }
+
+  code { background: #eef2f8; border-radius: 4px; padding: 2px 6px; font-family: "SF Mono", "Fira Code", monospace; font-size: .82rem; color: #5b21b6; }
+
+  /* ─── OPT FIELD TABLE ─── */
+  .opt-table td:first-child code { background: #ede9fe; color: #5b21b6; font-weight: 600; }
+  .opt-highlight td:first-child code { background: #5b21b6; color: #fff; }
+  .opt-highlight { background: #faf5ff; }
+
+  /* ─── FLOW DIAGRAM ─── */
+  .flow-section { background: var(--card); border-radius: 12px; padding: 32px 28px; margin: 40px 0; box-shadow: 0 2px 8px rgba(0,0,0,.07); border: 1px solid var(--border); }
+  .flow-section h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 28px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+
+  .flow-phase { margin-bottom: 32px; }
+  .flow-phase-label { font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 16px; padding: 5px 14px; border-radius: 20px; display: inline-block; }
+  .flow-phase-label.setup { background: #ede9fe; color: #5b21b6; }
+  .flow-phase-label.live  { background: #fef3c7; color: #92400e; }
+
+  .flow-nodes { display: flex; flex-direction: column; align-items: flex-start; gap: 0; }
+  .flow-node { display: flex; align-items: center; gap: 14px; }
+  .flow-box { padding: 10px 20px; border-radius: 8px; font-size: .88rem; font-weight: 600; min-width: 280px; display: flex; align-items: center; gap: 10px; }
+  .flow-box.setup-box   { background: var(--setup-bg); border: 2px solid var(--setup-border); color: var(--brand-dark); }
+  .flow-box.live-box    { background: var(--live-bg);  border: 2px solid var(--live-border);  color: #92400e; }
+  .flow-box.payment-box { background: #fff3cd; border: 2px solid var(--warn); color: #7a4000; }
+  .flow-box.optional-box { background: #f8fafc; border: 2px dashed #94a3b8; color: #475569; }
+  .flow-box .fn { font-size: .75rem; font-weight: 400; color: var(--muted); margin-left: auto; font-family: monospace; }
+  .flow-arrow { height: 28px; display: flex; align-items: center; padding-left: 20px; }
+
+  .flow-branch { margin: 8px 0 8px 34px; padding: 12px 16px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1; }
+  .flow-branch-title { font-size: .78rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px; }
+  .flow-branch-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 6px; font-size: .83rem; }
+  .flow-branch-row:last-child { margin-bottom: 0; }
+
+  /* ─── QUICK REF ─── */
+  .quick-ref { background: var(--card); border-radius: 12px; padding: 28px; margin: 32px 0; box-shadow: 0 2px 8px rgba(0,0,0,.07); border: 1px solid var(--border); }
+  .quick-ref h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 18px; }
+  .qr-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: .875rem; }
+  .qr-row:last-child { border-bottom: none; }
+  .qr-num { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .78rem; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .qr-name { flex: 1; font-weight: 600; }
+  .qr-file { font-family: monospace; font-size: .8rem; color: var(--brand); background: #ede9fe; padding: 2px 8px; border-radius: 4px; }
+  .qr-when { color: var(--muted); font-size: .8rem; width: 120px; }
+  .qr-cache { color: var(--muted); font-size: .8rem; }
+
+  /* ─── SUPPORT ─── */
+  .support { background: var(--card); border-radius: 12px; padding: 28px; margin: 32px 0; border: 1px solid var(--border); }
+  .support h2 { font-size: 1.05rem; font-weight: 700; margin-bottom: 16px; }
+  .support-grid { display: flex; gap: 16px; flex-wrap: wrap; }
+  .support-item { display: flex; align-items: center; gap: 12px; background: #f8fafc; border-radius: 10px; padding: 12px 18px; flex: 1; min-width: 200px; text-decoration: none; color: inherit; border: 1px solid var(--border); transition: box-shadow .15s; }
+  .support-item:hover { box-shadow: 0 2px 12px rgba(0,0,0,.1); }
+  .support-icon { font-size: 1.5rem; }
+  .support-label { font-size: .78rem; color: var(--muted); }
+  .support-val { font-size: .9rem; font-weight: 600; color: var(--text); }
+
+  /* ─── FOOTER ─── */
+  footer { text-align: center; padding: 24px; font-size: .82rem; color: var(--muted); border-top: 1px solid var(--border); margin-top: 20px; }
+
+  @media (max-width: 600px) {
+    header h1 { font-size: 1.5rem; }
+    .flow-box { min-width: 220px; }
+    .qr-row { flex-wrap: wrap; }
+    .support-item { min-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">KwikAPI v3.0.1 — Integration Guide</div>
+  <h1>🧾 BBPS Bill Payment Flow</h1>
+  <p>Step-by-step guide for integrating BBPS utility bill payments using KwikAPI India SDK.</p>
+  <div class="header-tags">
+    <span>Electricity</span>
+    <span>Water</span>
+    <span>Gas</span>
+    <span>Broadband</span>
+    <span>Insurance</span>
+    <span>Loan EMI</span>
+    <span>1000+ Billers</span>
+    <span>5 Steps</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- ══════════════════════════════════════ PHASE 1 ══════════════ -->
+  <div class="phase-header setup">
+    <div class="phase-icon">🗂️</div>
+    <div>
+      <div class="phase-title">Phase 1 — Setup</div>
+      <div class="phase-sub">Run once during onboarding · Refresh on a schedule · Store results in your DB</div>
+    </div>
+  </div>
+
+  <!-- Step 1 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num setup">1</div>
+      <div class="step-meta">
+        <h3>Service Category List <span class="tag setup">Setup</span></h3>
+        <div class="step-api">POST /api/v2/Service-Category-List.php</div>
+        <p>Refresh: Weekly or on demand &nbsp;·&nbsp; Rate limit: 10 / day</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <p class="step-desc">Fetch all available service categories. For bill payments, relevant categories include: Electricity, Water, Gas, Broadband, Landline, Insurance, Loan Repayment, Education Fees, Municipal Taxes, Cable TV, Fastag, Credit Card, and more.</p>
+      <div class="code-block">
+<div class="code-label">Response Shape</div>
+<span class="code-key">categories</span>[] → {
+  <span class="code-key">service_name</span>:    <span class="code-str">"Electricity"</span>,
+  <span class="code-key">total_operators</span>: <span class="code-str">87</span>
+}</div>
+      <div class="note">💡 Store the category names. Use them to populate your biller-selection UI by service type.</div>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num setup">2</div>
+      <div class="step-meta">
+        <h3>Biller List <span class="tag setup">Setup</span></h3>
+        <div class="step-api">GET /api/v2/operator_codes.php</div>
+        <p>Refresh: Weekly (changes are rare) &nbsp;·&nbsp; Rate limit: 20 / day</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <p class="step-desc">Fetch all BBPS billers with their operator codes, active status, and supported amount ranges. Filter by <code>service</code> parameter to get only the billers relevant to your use case.</p>
+      <div class="code-block">
+<div class="code-label">Response Shape</div>
+<span class="code-key">operators</span>[] → {
+  <span class="code-key">opid</span>:       <span class="code-str">"53"</span>,
+  <span class="code-key">name</span>:       <span class="code-str">"MSEDCL Electricity"</span>,
+  <span class="code-key">service</span>:    <span class="code-str">"Electricity"</span>,
+  <span class="code-key">min_amount</span>: <span class="code-str">1</span>,
+  <span class="code-key">max_amount</span>: <span class="code-str">50000</span>,
+  <span class="code-key">status</span>:     <span class="code-str">"ACTIVE"</span>
+}</div>
+      <div class="note">💡 Store the full list locally. You will use <code>opid</code> in every bill payment request.</div>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num setup">3</div>
+      <div class="step-meta">
+        <h3>Biller Details <span class="tag setup">Setup</span></h3>
+        <div class="step-api">POST /api/v2/operatorFetch.php</div>
+        <p>Refresh: Weekly (changes are rare) &nbsp;·&nbsp; Rate limit: 20 / day &nbsp;·&nbsp; Supports batch: <code>53#54#55</code></p>
+      </div>
+    </div>
+    <div class="step-body">
+      <p class="step-desc">Fetch full details per biller — this is critical for bill payments as it tells you:</p>
+      <ul style="margin: 8px 0 14px 18px; font-size:.9rem; line-height:1.9;">
+        <li>Whether the biller supports <strong>bill fetch</strong> (outstanding amount lookup)</li>
+        <li>Which <strong>additional fields</strong> (opt1–opt10) are required (e.g. consumer number, account ID, district)</li>
+        <li>Supported payment channels and NPCI payment modes</li>
+      </ul>
+      <div class="code-block">
+<div class="code-label">Response Shape</div>
+<span class="code-key">operator</span> → {
+  <span class="code-key">bill_fetch_supported</span>: <span class="code-str">true</span>,          <span class="code-cmt">← drives Step 4 decision</span>
+  <span class="code-key">required_params</span>:     [<span class="code-str">"consumer_no"</span>], <span class="code-cmt">← maps to opt1–opt10</span>
+  <span class="code-key">payment_channels</span>:    [<span class="code-str">"NEFT"</span>, <span class="code-str">"IMPS"</span>],
+  <span class="code-key">min_amount</span>:          <span class="code-str">1</span>,
+  <span class="code-key">max_amount</span>:          <span class="code-str">50000</span>
+}</div>
+      <div class="warn-box">⚠️ Always check <code>required_params</code> — passing wrong or missing opt fields will cause payment failure.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ PHASE 2 ══════════════ -->
+  <div class="phase-header live">
+    <div class="phase-icon">⚡</div>
+    <div>
+      <div class="phase-title live">Phase 2 — Live Transaction</div>
+      <div class="phase-sub">Run at the time of each customer bill payment request · Real-time APIs</div>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num optional">4</div>
+      <div class="step-meta">
+        <h3>Bill Fetch <span class="tag optional">Optional</span></h3>
+        <div class="step-api">GET /api/v2/bills/validation.php</div>
+        <p>Only if <code>bill_fetch_supported = true</code> in Biller Details (Step 3)</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <p class="step-desc">Fetches the outstanding bill amount, due date, and consumer details directly from the biller. Use this to show the customer their exact due amount before payment — improves trust and reduces errors.</p>
+      <div class="code-block">
+<div class="code-label">Request Parameters</div>
+{
+  <span class="code-key">api_key</span>:    <span class="code-str">"YOUR_API_KEY"</span>,
+  <span class="code-key">number</span>:     <span class="code-str">"1234567890"</span>,  <span class="code-cmt">← consumer / account / registered number</span>
+  <span class="code-key">amount</span>:     <span class="code-str">0</span>,             <span class="code-cmt">← pass 0 if unknown</span>
+  <span class="code-key">opid</span>:       <span class="code-str">"53"</span>,          <span class="code-cmt">← from Biller List (Step 2)</span>
+  <span class="code-key">order_id</span>:   <span class="code-str">"FETCH-001"</span>,   <span class="code-cmt">← unique reference for this fetch</span>
+  <span class="code-key">opt1</span>:       <span class="code-str">"1234567890"</span>, <span class="code-cmt">← as required by biller (Step 3)</span>
+  <span class="code-key">mobile</span>:     <span class="code-str">"9876543210"</span>  <span class="code-cmt">← optional</span>
+}</div>
+      <div class="code-block">
+<div class="code-label">Response</div>
+{
+  <span class="code-key">due_amount</span>:    <span class="code-str">1450.00</span>,
+  <span class="code-key">due_date</span>:      <span class="code-str">"2026-05-15"</span>,
+  <span class="code-key">consumer_name</span>: <span class="code-str">"Vivek Sharma"</span>,
+  <span class="code-key">bill_period</span>:   <span class="code-str">"APR-2026"</span>
+}</div>
+      <div class="info-box">
+        <strong>Two paths from here:</strong><br>
+        Bill fetch supported → show due amount to customer → Step 5<br>
+        Bill fetch not supported → customer enters amount manually → Step 5
+      </div>
+      <div class="note">💡 Never skip checking <code>bill_fetch_supported</code> in Biller Details before calling this. Calling it on a non-supported biller returns an error.</div>
+    </div>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num payment">5</div>
+      <div class="step-meta">
+        <h3>Utility Payment (BBPS) <span class="tag payment">Payment</span></h3>
+        <div class="step-api">GET /api/v2/bills/payments.php</div>
+        <p>Submit the bill payment</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <p class="step-desc">Submit the bill payment with all confirmed details. This is the payment step — the API processes through the BBPS network and may take variable time.</p>
+      <div class="code-block">
+<div class="code-label">Request Parameters</div>
+{
+  <span class="code-key">api_key</span>:      <span class="code-str">"YOUR_API_KEY"</span>,
+  <span class="code-key">number</span>:       <span class="code-str">"1234567890"</span>,  <span class="code-cmt">← consumer / account number</span>
+  <span class="code-key">amount</span>:       <span class="code-str">1450</span>,          <span class="code-cmt">← from fetch or manual entry</span>
+  <span class="code-key">opid</span>:         <span class="code-str">"53"</span>,          <span class="code-cmt">← from Biller List (Step 2)</span>
+  <span class="code-key">order_id</span>:     <span class="code-str">"ORD-20260506-001"</span>, <span class="code-cmt">← unique, never reuse</span>
+  <span class="code-key">opt1</span>:         <span class="code-str">"1234567890"</span>, <span class="code-cmt">← consumer number (from Step 3)</span>
+  <span class="code-key">opt8</span>:         <span class="code-str">"Bills"</span>,       <span class="code-cmt">← ALWAYS "Bills" (fixed, required)</span>
+  <span class="code-key">refrence_id</span>:  <span class="code-str">"REF-001"</span>,    <span class="code-cmt">← optional reconciliation reference</span>
+  <span class="code-key">mobile</span>:       <span class="code-str">"9876543210"</span>  <span class="code-cmt">← optional, confirmation SMS</span>
+}</div>
+      <div class="warn-box">⚠️ <code>opt8</code> must always be set to <code>"Bills"</code> — this is a fixed required value, not optional.<br>Generate a unique <code>order_id</code> for every transaction. Never reuse one.</div>
+      <div class="code-block">
+<div class="code-label">Response</div>
+{
+  <span class="code-key">success</span>:      <span class="code-str">true</span>,
+  <span class="code-key">status</span>:       <span class="code-str">"SUCCESS"</span>,           <span class="code-cmt">← "SUCCESS" | "FAILURE" | "PENDING"</span>
+  <span class="code-key">order_id</span>:     <span class="code-str">"ORD-20260506-001"</span>,
+  <span class="code-key">operator_ref</span>: <span class="code-str">"BBPS123456"</span>         <span class="code-cmt">← biller's transaction reference</span>
+}</div>
+      <table>
+        <tr><th>Status</th><th>Action</th></tr>
+        <tr><td><span class="status-badge s-success">SUCCESS</span></td><td>Show confirmation to customer, update your records</td></tr>
+        <tr><td><span class="status-badge s-failure">FAILURE</span></td><td>Show failure message, do not retry with same order_id</td></tr>
+        <tr><td><span class="status-badge s-pending">PENDING</span></td><td>Wait 60–120 seconds, check via Transaction Status API</td></tr>
+      </table>
+      <div class="note">💡 If PENDING — use Transaction Status API (<code>/api/v2/status.php</code>) with your <code>order_id</code> to poll. ~99% of transactions complete synchronously with a real-time response.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ FLOW DIAGRAM ══════════ -->
+  <div class="flow-section">
+    <h2>🔀 Complete Flow Diagram</h2>
+
+    <div class="flow-phase">
+      <div class="flow-phase-label setup">Phase 1 — Setup (store in DB, refresh weekly)</div>
+      <div class="flow-nodes">
+        <div class="flow-node">
+          <div class="flow-box setup-box"><span>1</span> Service Category List <span class="fn">service-category-list</span></div>
+        </div>
+        <div class="flow-arrow"><svg width="18" height="28" viewBox="0 0 18 28" fill="none"><path d="M9 0v20M2 14l7 10 7-10" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="flow-node">
+          <div class="flow-box setup-box"><span>2</span> Biller List <span class="fn">biller-list → store opids</span></div>
+        </div>
+        <div class="flow-arrow"><svg width="18" height="28" viewBox="0 0 18 28" fill="none"><path d="M9 0v20M2 14l7 10 7-10" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="flow-node">
+          <div class="flow-box setup-box"><span>3</span> Biller Details (batch) <span class="fn">biller-details → bill_fetch flag + opt params</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-phase">
+      <div class="flow-phase-label live">Phase 2 — Live Transaction (per customer bill payment)</div>
+      <div class="flow-nodes">
+        <div class="flow-node">
+          <div class="flow-box live-box" style="background:#fffbeb;border-color:#fcd34d;color:#78350f;">Customer selects biller + enters consumer number</div>
+        </div>
+        <div class="flow-arrow"><svg width="18" height="28" viewBox="0 0 18 28" fill="none"><path d="M9 0v20M2 14l7 10 7-10" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg></div>
+
+        <div class="flow-branch">
+          <div class="flow-branch-title">Bill fetch decision (from Biller Details)</div>
+          <div class="flow-branch-row">
+            <div class="flow-box optional-box" style="min-width:0;padding:7px 14px;font-size:.82rem;">4 — bill_fetch_supported = true → Bill Fetch → show due amount</div>
+          </div>
+          <div class="flow-branch-row" style="color:var(--muted);font-size:.82rem;">or: bill_fetch_supported = false → customer enters amount manually</div>
+          <div class="flow-branch-row" style="color:var(--muted);font-size:.82rem;">→ Both paths lead to Step 5</div>
+        </div>
+
+        <div class="flow-arrow"><svg width="18" height="28" viewBox="0 0 18 28" fill="none"><path d="M9 0v20M2 14l7 10 7-10" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="flow-node">
+          <div class="flow-box payment-box"><span>5</span> Utility Payment (BBPS) <span class="fn">opt8="Bills"</span></div>
+        </div>
+        <div class="flow-arrow"><svg width="18" height="28" viewBox="0 0 18 28" fill="none"><path d="M9 0v20M2 14l7 10 7-10" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg></div>
+
+        <div class="flow-branch">
+          <div class="flow-branch-title">Response handling</div>
+          <div class="flow-branch-row"><span class="status-badge s-success">SUCCESS</span> <span style="font-size:.83rem;">→ update records + notify customer</span></div>
+          <div class="flow-branch-row"><span class="status-badge s-failure">FAILURE</span> <span style="font-size:.83rem;">→ show failure, do not retry same order_id</span></div>
+          <div class="flow-branch-row"><span class="status-badge s-pending">PENDING</span> <span style="font-size:.83rem;">→ Transaction Status API (poll, optional)</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ OPT FIELDS ════════════ -->
+  <div class="quick-ref">
+    <h2>🔤 opt1–opt10 Field Mapping</h2>
+    <p style="font-size:.875rem;color:var(--muted);margin-bottom:16px;">BBPS billers require different sets of additional parameters passed as <code>opt1</code> through <code>opt10</code>. Always refer to <code>required_params</code> from the Biller Details API for each operator.</p>
+    <table class="opt-table">
+      <tr><th>opt field</th><th>Common usage</th></tr>
+      <tr><td><code>opt1</code></td><td>Consumer number / Account number</td></tr>
+      <tr><td><code>opt2</code></td><td>Consumer name / Account holder name</td></tr>
+      <tr><td><code>opt3</code></td><td>Mobile number / Registered phone</td></tr>
+      <tr><td><code>opt4</code></td><td>Email address</td></tr>
+      <tr><td><code>opt5</code></td><td>District / Sub-division / Zone</td></tr>
+      <tr><td><code>opt6</code></td><td>Bill date / Due date</td></tr>
+      <tr><td><code>opt7</code></td><td>Bill number / Reference number</td></tr>
+      <tr class="opt-highlight"><td><code>opt8</code></td><td><strong>Always <code>"Bills"</code></strong> — fixed required value</td></tr>
+      <tr><td><code>opt9</code></td><td>Service type / Category</td></tr>
+      <tr><td><code>opt10</code></td><td>Additional biller-specific field</td></tr>
+    </table>
+    <div class="note" style="margin-top:12px;">💡 The exact mapping varies per biller. Use <code>required_params[]</code> from Biller Details as the source of truth.</div>
+  </div>
+
+  <!-- ══════════════════════════════════════ QUICK REF ═════════════ -->
+  <div class="quick-ref">
+    <h2>⚡ Quick Reference</h2>
+    <div class="qr-row">
+      <div class="qr-num" style="background:var(--brand)">1</div>
+      <div class="qr-name">Service Category List</div>
+      <div class="qr-file">service-category-list</div>
+      <div class="qr-when">Setup</div>
+      <div class="qr-cache">Cache: Weekly</div>
+    </div>
+    <div class="qr-row">
+      <div class="qr-num" style="background:var(--brand)">2</div>
+      <div class="qr-name">Biller List</div>
+      <div class="qr-file">biller-list</div>
+      <div class="qr-when">Setup</div>
+      <div class="qr-cache">Cache: Weekly</div>
+    </div>
+    <div class="qr-row">
+      <div class="qr-num" style="background:var(--brand)">3</div>
+      <div class="qr-name">Biller Details</div>
+      <div class="qr-file">biller-details</div>
+      <div class="qr-when">Setup</div>
+      <div class="qr-cache">Cache: Weekly</div>
+    </div>
+    <div class="qr-row">
+      <div class="qr-num" style="background:#7c8da6">4</div>
+      <div class="qr-name">Bill Fetch <em style="font-weight:400;color:var(--muted)">(optional)</em></div>
+      <div class="qr-file">bill-fetch</div>
+      <div class="qr-when">If supported</div>
+      <div class="qr-cache">No cache</div>
+    </div>
+    <div class="qr-row">
+      <div class="qr-num" style="background:var(--warn)">5</div>
+      <div class="qr-name">Utility Payment (BBPS)</div>
+      <div class="qr-file">utility-payments</div>
+      <div class="qr-when">Payment</div>
+      <div class="qr-cache">No cache</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ SUPPORT ═══════════════ -->
+  <div class="support">
+    <h2>Support</h2>
+    <div class="support-grid">
+      <a class="support-item" href="https://wa.me/917070300613?text=Hi%2C+I+need+help+in+API+docs.+I+am+exploring+the+*GitHub+India+SDK*+%F0%9F%91%89+https%3A%2F%2Fgithub.com%2Fyoflic%2FKwikAPI-India">
+        <div class="support-icon">💬</div>
+        <div><div class="support-label">WhatsApp</div><div class="support-val">+91-7070300613</div></div>
+      </a>
+      <a class="support-item" href="mailto:support@kwikapi.com">
+        <div class="support-icon">📧</div>
+        <div><div class="support-label">Email</div><div class="support-val">support@kwikapi.com</div></div>
+      </a>
+      <div class="support-item">
+        <div class="support-icon">📞</div>
+        <div><div class="support-label">Toll Free</div><div class="support-val">18008890016</div></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<footer>
+  KwikAPI v3.0.1 — by Yoflic India Pvt Ltd &nbsp;·&nbsp;
+  <a href="https://github.com/yoflic/KwikAPI-India" style="color:var(--brand);text-decoration:none;">github.com/yoflic/KwikAPI-India</a>
+</footer>
+
+</body>
+</html>

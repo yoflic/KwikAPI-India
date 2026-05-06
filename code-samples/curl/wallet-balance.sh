@@ -8,6 +8,9 @@
 # Group     : Fetching APIs
 # Rate Limit: 48 / day
 #
+# Parameters:
+#   api_key            (required) Your KwikAPI API key
+#
 # Environment:
 #   UAT (testing) : https://uat.kwikapi.com
 #   Production    : https://www.kwikapi.com  (change BASE_URL below)
@@ -26,7 +29,7 @@ kwik_wallet_balance() {
   response=$(
     curl -s -G \
   --data-urlencode 'api_key=YOUR_API_KEY' \
-  '"${{BASE_URL}}{api["path"]}"'
+  "${BASE_URL}/api/v2/balance.php"
   )
 
   echo "$response" | python3 -m json.tool 2>/dev/null || echo "$response"

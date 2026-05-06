@@ -44,13 +44,12 @@ def operator_circle_detect(api_key: str = 'YOUR_API_KEY', number: str = '9999999
     Raises:
         KwikAPIError: If the API returns success=false.
         requests.HTTPError: On non-2xx HTTP status.
-        requests.Timeout: If the request exceeds the timeout.
     """
     url = BASE_URL + "/api/v2/operator_fetch_v2.php"
 
     with requests.Session() as session:
         session.headers.update({"Accept": "application/json"})
-        response = session.post(url, data={'api_key': api_key, 'number': number}, timeout=30)
+        response = session.post(url, data={'api_key': api_key, 'number': number})
 
     response.raise_for_status()
     data = response.json()

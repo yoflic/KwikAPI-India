@@ -21,6 +21,12 @@ const BASE_URL = 'https://uat.kwikapi.com'; // Switch to https://www.kwikapi.com
 
 /**
  * Payout (Money Transfer)
+ * @param {string} api_key - (required) Your KwikAPI API key
+ * @param {string} account_no - (required) Beneficiary bank account number
+ * @param {number} amount - (required) Transfer amount in INR
+ * @param {string} order_id - (required) Your unique order ID
+ * @param {string} ifsc_code - (required) Beneficiary bank IFSC code
+ * @param {string} bene_name - (required) Beneficiary full name
  * @returns {jQuery.Deferred} Resolves with parsed JSON response
  */
 function payout(api_key = 'YOUR_API_KEY', account_no = 'BENEFICIARY_ACCOUNT_NUMBER', amount = '1000', order_id = 'YOUR_UNIQUE_ORDER_ID', ifsc_code = 'SBIN0001234', bene_name = 'Beneficiary Name') {
@@ -31,10 +37,9 @@ function payout(api_key = 'YOUR_API_KEY', account_no = 'BENEFICIARY_ACCOUNT_NUMB
     method:   'POST',
     data:     data,
     dataType: 'json',
-    timeout:  60000,
   })
   .done(function (response) {
-    if (!response.success) {
+    if (response.status !== 'SUCCESS') {
       throw new Error('API error: ' + (response.message || 'Unknown error'));
     }
     return response;

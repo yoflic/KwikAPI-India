@@ -22,7 +22,7 @@ const BASE_URL = 'https://uat.kwikapi.com'; // Switch to https://www.kwikapi.com
 
 /**
  * Last 100 Transactions
- * @param  {api_key = 'YOUR_API_KEY'}
+ * @param {string} api_key - (required) Your KwikAPI API key
  * @returns {Promise<object>}
  */
 async function lastTransactions(api_key = 'YOUR_API_KEY') {
@@ -41,7 +41,7 @@ async function lastTransactions(api_key = 'YOUR_API_KEY') {
 
     const data = await response.json();
 
-    if (!data.success) {
+    if (!Array.isArray(data)) {
       throw new Error(`API error: ${data.message || 'Unknown error'}`);
     }
 

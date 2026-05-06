@@ -32,7 +32,6 @@ async function ipDetect() {
   try {
   const response = await axios.get(`${BASE_URL}/api/v2/ip_detect.php`, {
     headers: { Accept: 'application/json' },
-    timeout: 10000,
   });
 
     const data = response.data;

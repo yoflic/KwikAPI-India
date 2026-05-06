@@ -23,6 +23,8 @@ const BASE_URL = 'https://uat.kwikapi.com'; // Switch to https://www.kwikapi.com
 
 /**
  * DTH Recharge Plans
+ * @param {string} api_key - (required) Your KwikAPI API key
+ * @param {int} opid - (required) DTH operator ID from Biller List API
  * @returns {Promise<object>} Parsed JSON response
  * @throws {Error} on HTTP or API-level error
  */
@@ -34,7 +36,6 @@ async function dthRechargePlans(api_key = 'YOUR_API_KEY', opid = 'DTH_OPERATOR_I
   });
   const response = await axios.post(`${BASE_URL}/api/v2/DTH_plans.php`, params, {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' },
-    timeout: 30000,
   });
 
     const data = response.data;

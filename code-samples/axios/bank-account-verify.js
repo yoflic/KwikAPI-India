@@ -24,6 +24,11 @@ const BASE_URL = 'https://uat.kwikapi.com'; // Switch to https://www.kwikapi.com
 
 /**
  * Bank Account Verification
+ * @param {string} api_key - (required) Your KwikAPI API key
+ * @param {string} number - (required) Beneficiary bank account number
+ * @param {string} account - (required) Same as number (required field alias)
+ * @param {string} ifsc - (optional) IFSC code for faster verification
+ * @param {string} order_id - (required) Your unique order ID for this verification
  * @returns {Promise<object>} Parsed JSON response
  * @throws {Error} on HTTP or API-level error
  */
@@ -38,7 +43,6 @@ async function bankAccountVerify(api_key = 'YOUR_API_KEY', number = 'ACCOUNT_NUM
   });
   const response = await axios.post(`${BASE_URL}/api/v2/dmt/account_validate_route2`, params, {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' },
-    timeout: 30000,
   });
 
     const data = response.data;

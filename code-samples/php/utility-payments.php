@@ -2,12 +2,11 @@
 /**
  * KwikAPI SDK — Utility Payments (BBPS)
  * ─────────────────────────────────────────────────────────────────────────────
- * Processes all BBPS (Bharat Bill Payment System) utility bill payments — including Electricity, Water, Gas, Broadband, Landline, DTH, Insurance, Loan EMI, and more. IMPORTANT: Set HTTP timeout to 0. Always pass opt8='Bills' as required by the API. Pass additional operator-specific fields (opt1–opt10) as indicated in the Biller Details response. After submission, always confirm final status via Transaction Status API.
+ * Processes all BBPS (Bharat Bill Payment System) utility bill payments — including Electricity, Water, Gas, Broadband, Landline, DTH, Insurance, Loan EMI, and more. Always pass opt8='Bills' as required by the API. Pass additional operator-specific fields (opt1–opt10) as indicated in the Biller Details response. After submission, always confirm final status via Transaction Status API.
  *
  * Endpoint  : GET /api/v2/bills/payments.php
  * Group     : Payment APIs
  * Rate Limit: Per account
- * NOTE: Set HTTP timeout to 0 (no timeout).
  * NOTE: opt8 must always be 'Bills'.
  * NOTE: Always verify final status via Transaction Status API.
  *
@@ -59,7 +58,6 @@ function kwik_utility_payments(string $apiKey = KWIKAPI_KEY, string $number = 'C
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_HTTPGET        => true,
         CURLOPT_SSL_VERIFYPEER => true,
-        CURLOPT_TIMEOUT        => 0,
         CURLOPT_HTTPHEADER     => ['Accept: application/json'],
     ]);
 
@@ -84,7 +82,7 @@ function kwik_utility_payments(string $apiKey = KWIKAPI_KEY, string $number = 'C
 try {
     $result = kwik_utility_payments(KWIKAPI_KEY, 'CONSUMER_NUMBER', '500', 'OPERATOR_ID', 'YOUR_UNIQUE_ORDER_ID', 'Bills', '9999999999');
 
-    if ($result['success'] ?? false) {
+    if (($result['status'] ?? '') === 'SUCCESS') {
         echo "Success: " . ($result['message'] ?? 'OK') . PHP_EOL;
         echo json_encode($result, JSON_PRETTY_PRINT) . PHP_EOL;
     } else {

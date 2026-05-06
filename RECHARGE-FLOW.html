@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recharge Flow — KwikAPI Integration Guide</title>
+<style>
+  :root {
+    --brand:       #0a6ed1;
+    --brand-dark:  #064ea1;
+    --setup-bg:    #e8f1fb;
+    --setup-border:#0a6ed1;
+    --live-bg:     #e8f7f0;
+    --live-border: #1db87e;
+    --live-accent: #1db87e;
+    --warn:        #e07a00;
+    --warn-bg:     #fff4e0;
+    --danger:      #c0392b;
+    --success:     #1db87e;
+    --code-bg:     #1e2530;
+    --code-text:   #d4e0f0;
+    --note-bg:     #fffbe6;
+    --note-border: #f0c040;
+    --text:        #1a2233;
+    --muted:       #5a6a82;
+    --border:      #d0dae8;
+    --bg:          #f4f7fb;
+    --card:        #ffffff;
+    --step-num:    #ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.65; font-size: 15px; }
+
+  /* ─── HEADER ─── */
+  header { background: linear-gradient(135deg, #0a3d6e 0%, #0a6ed1 100%); color: #fff; padding: 48px 24px 40px; text-align: center; position: relative; overflow: hidden; }
+  header::before { content: ''; position: absolute; inset: 0; background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+  header .badge { display: inline-block; background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; padding: 4px 14px; font-size: 12px; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 16px; }
+  header h1 { font-size: 2.1rem; font-weight: 700; margin-bottom: 12px; position: relative; }
+  header p { font-size: 1rem; opacity: .85; max-width: 620px; margin: 0 auto; position: relative; }
+  .header-tags { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; position: relative; }
+  .header-tags span { background: rgba(255,255,255,0.15); border-radius: 12px; padding: 3px 12px; font-size: 12px; }
+
+  /* ─── CONTAINER ─── */
+  .container { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  /* ─── PHASE HEADERS ─── */
+  .phase-header { display: flex; align-items: center; gap: 14px; margin: 48px 0 24px; padding: 16px 24px; border-radius: 10px; }
+  .phase-header.setup { background: var(--setup-bg); border-left: 5px solid var(--setup-border); }
+  .phase-header.live  { background: var(--live-bg);  border-left: 5px solid var(--live-border);  }
+  .phase-icon { font-size: 1.8rem; }
+  .phase-title { font-size: 1.2rem; font-weight: 700; color: var(--brand-dark); }
+  .phase-title.live { color: #0e7a55; }
+  .phase-sub { font-size: .875rem; color: var(--muted); margin-top: 2px; }
+
+  /* ─── STEP CARDS ─── */
+  .step { background: var(--card); border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.07); margin-bottom: 20px; overflow: hidden; border: 1px solid var(--border); }
+  .step-header { display: flex; align-items: flex-start; gap: 16px; padding: 20px 24px 16px; }
+  .step-num { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .95rem; color: var(--step-num); }
+  .step-num.setup { background: var(--brand); }
+  .step-num.live  { background: var(--live-accent); }
+  .step-num.optional { background: #7c8da6; }
+  .step-num.payment { background: var(--warn); }
+  .step-meta { flex: 1; }
+  .step-meta h3 { font-size: 1.05rem; font-weight: 700; color: var(--text); margin-bottom: 4px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .tag { display: inline-block; border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+  .tag.setup    { background: #dbeafe; color: #1e40af; }
+  .tag.live     { background: #dcfce7; color: #166534; }
+  .tag.optional { background: #f1f5f9; color: #475569; }
+  .tag.payment  { background: #fff3cd; color: #92400e; }
+  .tag.warning  { background: #fee2e2; color: #991b1b; }
+  .step-api { font-size: .82rem; color: var(--muted); font-family: "SF Mono", "Fira Code", monospace; margin-top: 3px; }
+  .step-meta p { font-size: .9rem; color: var(--muted); margin-top: 6px; }
+
+  .step-body { padding: 0 24px 20px; }
+  .step-desc { font-size: .9rem; color: var(--text); margin-bottom: 14px; }
+
+  /* ─── CODE BLOCKS ─── */
+  .code-block { background: var(--code-bg); color: var(--code-text); border-radius: 8px; padding: 16px 18px; font-family: "SF Mono", "Fira Code", "Consolas", monospace; font-size: .8rem; line-height: 1.7; overflow-x: auto; margin: 12px 0; position: relative; }
+  .code-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: #6a8caa; margin-bottom: 6px; }
+  .code-kw  { color: #79c0ff; }
+  .code-str { color: #a5d6ff; }
+  .code-cmt { color: #6a8caa; font-style: italic; }
+  .code-key { color: #d2a8ff; }
+
+  /* ─── NOTE BOXES ─── */
+  .note { background: var(--note-bg); border-left: 4px solid var(--note-border); border-radius: 0 6px 6px 0; padding: 11px 16px; font-size: .875rem; color: #6b4f00; margin: 12px 0; }
+  .warn-box { background: var(--warn-bg); border-left: 4px solid var(--warn); border-radius: 0 6px 6px 0; padding: 11px 16px; font-size: .875rem; color: #7a4000; margin: 12px 0; }
+  .info-box { background: #e8f4fd; border-left: 4px solid #2196f3; border-radius: 0 6px 6px 0; padding: 11px 16px; font-size: .875rem; color: #0d3c61; margin: 12px 0; }
+
+  /* ─── STATUS TABLE ─── */
+  table { width: 100%; border-collapse: collapse; font-size: .875rem; margin: 12px 0; }
+  th { background: #f0f4fa; padding: 9px 14px; text-align: left; font-weight: 600; font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); border-bottom: 2px solid var(--border); }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  .status-badge { display: inline-block; border-radius: 12px; padding: 2px 10px; font-size: .78rem; font-weight: 600; }
+  .s-success { background: #dcfce7; color: #166534; }
+  .s-failure { background: #fee2e2; color: #991b1b; }
+  .s-pending { background: #fff3cd; color: #92400e; }
+
+  code { background: #eef2f8; border-radius: 4px; padding: 2px 6px; font-family: "SF Mono", "Fira Code", monospace; font-size: .82rem; color: #1e3a6e; }
+
+  /* ─── FLOW DIAGRAM ─── */
+  .flow-section { background: var(--card); border-radius: 12px; padding: 32px 28px; margin: 40px 0; box-shadow: 0 2px 8px rgba(0,0,0,.07); border: 1px solid var(--border); }
+  .flow-section h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 28px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+
+  .flow-phase { margin-bottom: 32px; }
+  .flow-phase-label { font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 16px; padding: 5px 14px; border-radius: 20px; display: inline-block; }
+  .flow-phase-label.setup { background: #dbeafe; color: #1e40af; }
+  .flow-phase-label.live  { background: #dcfce7; color: #166534; }
+
+  .flow-nodes { display: flex; flex-direction: column; align-items: flex-start; gap: 0; }
+  .flow-node { display: flex; align-items: center; gap: 14px; }
+  .flow-box { padding: 10px 20px; border-radius: 8px; font-size: .88rem; font-weight: 600; min-width: 280px; display: flex; align-items: center; gap: 10px; }
+  .flow-box.setup-box { background: var(--setup-bg); border: 2px solid var(--setup-border); color: var(--brand-dark); }
+  .flow-box.live-box  { background: var(--live-bg);  border: 2px solid var(--live-border);  color: #0e7a55; }
+  .flow-box.payment-box { background: #fff3cd; border: 2px solid var(--warn); color: #7a4000; }
+  .flow-box.optional-box { background: #f8fafc; border: 2px dashed #94a3b8; color: #475569; }
+  .flow-box .fn { font-size: .75rem; font-weight: 400; color: var(--muted); margin-left: auto; font-family: monospace; }
+  .flow-arrow { height: 28px; display: flex; align-items: center; padding-left: 20px; }
+  .flow-arrow svg { color: var(--muted); }
+  .flow-note-inline { font-size: .78rem; color: var(--muted); margin-left: 4px; }
+
+  .flow-branch { margin: 8px 0 8px 34px; padding: 12px 16px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1; }
+  .flow-branch-title { font-size: .78rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px; }
+  .flow-branch-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 6px; font-size: .83rem; }
+  .flow-branch-row:last-child { margin-bottom: 0; }
+
+  /* ─── QUICK REF ─── */
+  .quick-ref { background: var(--card); border-radius: 12px; padding: 28px; margin: 32px 0; box-shadow: 0 2px 8px rgba(0,0,0,.07); border: 1px solid var(--border); }
+  .quick-ref h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 18px; }
+  .qr-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: .875rem; }
+  .qr-row:last-child { border-bottom: none; }
+  .qr-num { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .78rem; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .qr-name { flex: 1; font-weight: 600; }
+  .qr-file { font-family: monospace; font-size: .8rem; color: var(--brand); background: #eef2f8; padding: 2px 8px; border-radius: 4px; }
+  .qr-when { color: var(--muted); font-size: .8rem; width: 110px; }
+  .qr-cache { color: var(--muted); font-size: .8rem; }
+
+  /* ─── SUPPORT ─── */
+  .support { background: var(--card); border-radius: 12px; padding: 28px; margin: 32px 0; border: 1px solid var(--border); }
+  .support h2 { font-size: 1.05rem; font-weight: 700; margin-bottom: 16px; }
+  .support-grid { display: flex; gap: 16px; flex-wrap: wrap; }
+  .support-item { display: flex; align-items: center; gap: 12px; background: #f8fafc; border-radius: 10px; padding: 12px 18px; flex: 1; min-width: 200px; text-decoration: none; color: inherit; border: 1px solid var(--border); transition: box-shadow .15s; }
+  .support-item:hover { box-shadow: 0 2px 12px rgba(0,0,0,.1); }
+  .support-icon { font-size: 1.5rem; }
+  .support-label { font-size: .78rem; color: var(--muted); }
+  .support-val { font-size: .9rem; font-weight: 600; color: var(--text); }
+
+  /* ─── FOOTER ─── */
+  footer { text-align: center; padding: 24px; font-size: .82rem; color: var(--muted); border-top: 1px solid var(--border); margin-top: 20px; }
+
+  @media (max-width: 600px) {
+    header h1 { font-size: 1.5rem; }
+    .flow-box { min-width: 220px; }
+    .qr-row { flex-wrap: wrap; }
+    .support-item { min-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">KwikAPI v3.0.1 — Integration Guide</div>
+  <h1>📱 Recharge Flow</h1>
+  <p>Step-by-step guide for integrating prepaid mobile and DTH recharge using KwikAPI India SDK.</p>
+  <div class="header-tags">
+    <span>Prepaid Mobile</span>
+    <span>DTH</span>
+    <span>MNP-Aware</span>
+    <span>8 Steps</span>
+    <span>UAT + Production</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- ══════════════════════════════════════ PHASE 1 ══════════════ -->
+  <div class="phase-header setup">
+    <div class="phase-icon">🗂️</div>
+    <div>
+      <div class="phase-title">Phase 1 — Setup</div>
+      <div class="phase-sub">Run once during onboarding · Refresh on a schedule · Store results in your DB</div>
+    </div>
+  </div>
+
+  <!-- Step 1 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num setup">1</div>
+      <div class="step-meta">
+        <h3>Service Category List <span class="tag setup">Setup</span></h3>
+        <div class="step-api">POST /api/v2/Service-Category-List.php</div>
+        <p>Refresh: Weekly or on demand &nbsp;·&nbsp; Rate limit: 10 / day</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <p class="step-desc">Fetch all available service categories (Prepaid, DTH, Broadband, Electricity, etc.). Use this to build your service selection UI and know which categories are available.</p>
+      <div class="code-block">
+<div class="code-label">Response Shape</div>
+<span class="code-key">categories</span>[] → {
+  <span class="code-key">service_name</span>: <span class="code-str">"Prepaid"</span>,
+  <span class="code-key">total_operators</span>: <span class="code-str">42</span>
+}</div>
+      <div class="note">💡 Store the category names. Use them to filter the Biller List in the next step.</div>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num setup">2</div>
+      <div class="step-meta">
+        <h3>Biller List <span class="tag setup">Setup</span></h3>
+        <div class="step-api">GET /api/v2/operator_codes.php</div>
+        <p>Refresh: Weekly (changes are rare) &nbsp;·&nbsp; Rate limit: 20 / day</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <p class="step-desc">Fetch all billers/operators with their codes, active status, and supported amount ranges. Filter by <code>service=Prepaid</code> or <code>service=DTH</code> to get only relevant operators.</p>
+      <div class="code-block">
+<div class="code-label">Response Shape</div>
+<span class="code-key">operators</span>[] → {
+  <span class="code-key">opid</span>:       <span class="code-str">"1"</span>,
+  <span class="code-key">name</span>:       <span class="code-str">"Jio Prepaid"</span>,
+  <span class="code-key">service</span>:    <span class="code-str">"Prepaid"</span>,
+  <span class="code-key">min_amount</span>: <span class="code-str">10</span>,
+  <span class="code-key">max_amount</span>: <span class="code-str">5000</span>,
+  <span class="code-key">status</span>:     <span class="code-str">"ACTIVE"</span>
+}</div>
+      <div class="note">💡 Store the full list locally. You will use <code>opid</code> in every recharge request.</div>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num setup">3</div>
+      <div class="step-meta">
+        <h3>Biller Details <span class="tag setup">Setup</span></h3>
+        <div class="step-api">POST /api/v2/operatorFetch.php</div>
+        <p>Refresh: Weekly (changes are rare) &nbsp;·&nbsp; Rate limit: 20 / day &nbsp;·&nbsp; Supports batch: <code>53#54#55</code></p>
+      </div>
+    </div>
+    <div class="step-body">
+      <p class="step-desc">Fetch full details for each operator — supported payment channels, NPCI payment modes, bill-fetch support flag, and required extra fields (opt1–opt10).</p>
+      <div class="code-block">
+<div class="code-label">Response Shape</div>
+<span class="code-key">operator</span> → {
+  <span class="code-key">bill_fetch_supported</span>: <span class="code-str">true | false</span>,
+  <span class="code-key">payment_channels</span>:    [<span class="code-str">"NEFT"</span>, <span class="code-str">"IMPS"</span>],
+  <span class="code-key">required_params</span>:     []    <span class="code-cmt">← maps to opt1–opt10</span>
+}</div>
+      <div class="note">💡 Store per operator. Use <code>bill_fetch_supported</code> to decide if you can show a bill preview.</div>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num setup">4</div>
+      <div class="step-meta">
+        <h3>Circle Codes <span class="tag setup">Setup</span></h3>
+        <div class="step-api">GET /api/v2/circle_codes.php</div>
+        <p>Refresh: Monthly (rarely changes) &nbsp;·&nbsp; Rate limit: 2 / day</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <p class="step-desc">Fetch all India telecom circle codes (MH, DL, KA, etc.). Required when fetching recharge plans and initiating prepaid recharges.</p>
+      <div class="code-block">
+<div class="code-label">Response Shape</div>
+<span class="code-key">circles</span>[] → {
+  <span class="code-key">circle_name</span>: <span class="code-str">"Maharashtra"</span>,
+  <span class="code-key">circle_code</span>: <span class="code-str">"MH"</span>
+}</div>
+      <div class="note">💡 Cache this locally. It almost never changes.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ PHASE 2 ══════════════ -->
+  <div class="phase-header live">
+    <div class="phase-icon">⚡</div>
+    <div>
+      <div class="phase-title live">Phase 2 — Live Transaction</div>
+      <div class="phase-sub">Run at the time of each customer recharge request · Real-time APIs</div>
+    </div>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num live">5</div>
+      <div class="step-meta">
+        <h3>Operator &amp; Circle Detect <span class="tag live">Live</span></h3>
+        <div class="step-api">POST /api/v2/operator_fetch_v2.php</div>
+        <p>Every time a mobile number is entered &nbsp;·&nbsp; MNP + circle-change aware</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <p class="step-desc">Pass the customer's 10-digit mobile number. Returns the real-time detected operator and circle, accounting for MNP (Mobile Number Portability) and circle migrations.</p>
+      <div class="code-block">
+<div class="code-label">Input → Output</div>
+<span class="code-cmt">// Input</span>
+{ <span class="code-key">number</span>: <span class="code-str">"9876543210"</span> }
+
+<span class="code-cmt">// Output</span>
+{
+  <span class="code-key">opid</span>:         <span class="code-str">"1"</span>,
+  <span class="code-key">operator_name</span>: <span class="code-str">"Jio"</span>,
+  <span class="code-key">circle_code</span>:  <span class="code-str">"MH"</span>,
+  <span class="code-key">circle_name</span>:  <span class="code-str">"Maharashtra"</span>,
+  <span class="code-key">is_ported</span>:    <span class="code-str">true</span>
+}</div>
+      <div class="warn-box">⚠️ Always call this — never assume operator from number prefix. MNP users will get the wrong recharge otherwise.</div>
+    </div>
+  </div>
+
+  <!-- Step 6 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num optional">6</div>
+      <div class="step-meta">
+        <h3>Recharge Plan Fetch <span class="tag optional">Optional</span></h3>
+        <div class="step-api">POST /api/v2/recharge_plans.php &nbsp;(mobile) &nbsp;|&nbsp; POST /api/v2/DTH_plans.php &nbsp;(DTH)</div>
+        <p>If you want to show available plans to the customer</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <p class="step-desc">Pass the <code>opid</code> (from Step 5) and <code>state_code</code> (from Step 5) to get all available plans for that operator and circle.</p>
+      <div class="code-block">
+<div class="code-label">Input → Output</div>
+<span class="code-cmt">// Input</span>
+{ <span class="code-key">opid</span>: <span class="code-str">"1"</span>, <span class="code-key">state_code</span>: <span class="code-str">"MH"</span> }
+
+<span class="code-cmt">// Output</span>
+<span class="code-key">plans</span>[] → {
+  <span class="code-key">amount</span>:      <span class="code-str">299</span>,
+  <span class="code-key">validity</span>:    <span class="code-str">"28 days"</span>,
+  <span class="code-key">description</span>: <span class="code-str">"2GB/day + Unlimited calls"</span>,
+  <span class="code-key">type</span>:        <span class="code-str">"Combo"</span>
+}</div>
+      <div class="info-box">ℹ️ Skipping this step is valid — just let the customer enter an amount directly. Both paths lead to Step 7.</div>
+    </div>
+  </div>
+
+  <!-- Step 7 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num payment">7</div>
+      <div class="step-meta">
+        <h3>Prepaid / DTH Recharge <span class="tag payment">Payment</span></h3>
+        <div class="step-api">GET /api/v2/recharge.php</div>
+        <p>Submit the recharge</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <p class="step-desc">Submit the recharge with all confirmed details. This is the payment step — the API may take variable time depending on the operator.</p>
+      <div class="code-block">
+<div class="code-label">Request Parameters</div>
+{
+  <span class="code-key">api_key</span>:    <span class="code-str">"YOUR_API_KEY"</span>,
+  <span class="code-key">number</span>:     <span class="code-str">"9876543210"</span>,   <span class="code-cmt">← customer mobile / DTH subscriber ID</span>
+  <span class="code-key">amount</span>:     <span class="code-str">299</span>,            <span class="code-cmt">← from plan or manual entry</span>
+  <span class="code-key">opid</span>:       <span class="code-str">"1"</span>,            <span class="code-cmt">← from Operator Detect (Step 5)</span>
+  <span class="code-key">state_code</span>: <span class="code-str">"MH"</span>,          <span class="code-cmt">← from Operator Detect (Step 5)</span>
+  <span class="code-key">order_id</span>:   <span class="code-str">"ORD-20260506-001"</span> <span class="code-cmt">← your unique order ID (never reuse)</span>
+}</div>
+      <div class="warn-box">⚠️ Generate a unique <code>order_id</code> for every transaction. Store it — you may need it for status lookup.</div>
+      <div class="code-block">
+<div class="code-label">Response</div>
+{
+  <span class="code-key">success</span>:      <span class="code-str">true</span>,
+  <span class="code-key">status</span>:       <span class="code-str">"SUCCESS"</span>,        <span class="code-cmt">← "SUCCESS" | "FAILURE" | "PENDING"</span>
+  <span class="code-key">order_id</span>:     <span class="code-str">"ORD-20260506-001"</span>,
+  <span class="code-key">operator_ref</span>: <span class="code-str">"JIO123456"</span>      <span class="code-cmt">← operator's transaction reference</span>
+}</div>
+      <table>
+        <tr><th>Status</th><th>Action</th></tr>
+        <tr><td><span class="status-badge s-success">SUCCESS</span></td><td>Show confirmation to customer, update your records</td></tr>
+        <tr><td><span class="status-badge s-failure">FAILURE</span></td><td>Show failure message, do not retry with same order_id</td></tr>
+        <tr><td><span class="status-badge s-pending">PENDING</span></td><td>Wait 30–60 seconds, check via Transaction Status API</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Step 8 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num optional">8</div>
+      <div class="step-meta">
+        <h3>Transaction Status <span class="tag optional">Optional</span></h3>
+        <div class="step-api">GET /api/v2/status.php</div>
+        <p>Only if the recharge response was PENDING or ambiguous &nbsp;·&nbsp; ~99% complete synchronously</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <p class="step-desc">~99% of transactions return a real-time SUCCESS or FAILURE response directly from the recharge API. Only call this if the response was PENDING, timed out, or unclear.</p>
+      <div class="code-block">
+<div class="code-label">Input → Output</div>
+<span class="code-cmt">// Input</span>
+{ <span class="code-key">api_key</span>: <span class="code-str">"YOUR_API_KEY"</span>, <span class="code-key">order_id</span>: <span class="code-str">"ORD-20260506-001"</span> }
+
+<span class="code-cmt">// Output</span>
+{
+  <span class="code-key">status</span>:       <span class="code-str">"SUCCESS"</span>,     <span class="code-cmt">← "SUCCESS" | "FAILURE" | "PENDING"</span>
+  <span class="code-key">operator_ref</span>: <span class="code-str">"JIO123456"</span>
+}</div>
+      <div class="note">💡 Only call when recharge response is PENDING or unclear. If still PENDING after 3–5 retries — contact KwikAPI support with the <code>order_id</code>.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ FLOW DIAGRAM ══════════ -->
+  <div class="flow-section">
+    <h2>🔀 Complete Flow Diagram</h2>
+
+    <div class="flow-phase">
+      <div class="flow-phase-label setup">Phase 1 — Setup (store in DB, refresh weekly/monthly)</div>
+      <div class="flow-nodes">
+        <div class="flow-node">
+          <div class="flow-box setup-box"><span>1</span> Service Category List <span class="fn">service-category-list</span></div>
+        </div>
+        <div class="flow-arrow"><svg width="18" height="28" viewBox="0 0 18 28" fill="none"><path d="M9 0v20M2 14l7 10 7-10" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="flow-node">
+          <div class="flow-box setup-box"><span>2</span> Biller List <span class="fn">biller-list → store opids</span></div>
+        </div>
+        <div class="flow-arrow"><svg width="18" height="28" viewBox="0 0 18 28" fill="none"><path d="M9 0v20M2 14l7 10 7-10" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="flow-node">
+          <div class="flow-box setup-box"><span>3</span> Biller Details (batch) <span class="fn">biller-details → per operator</span></div>
+        </div>
+        <div class="flow-arrow"><svg width="18" height="28" viewBox="0 0 18 28" fill="none"><path d="M9 0v20M2 14l7 10 7-10" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="flow-node">
+          <div class="flow-box setup-box"><span>4</span> Circle Codes <span class="fn">circle-codes → store circles</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-phase">
+      <div class="flow-phase-label live">Phase 2 — Live Transaction (per customer recharge)</div>
+      <div class="flow-nodes">
+        <div class="flow-node">
+          <div class="flow-box live-box" style="background:#f0fdf4;border-color:#a7f3d0;color:#065f46;">Customer enters mobile number</div>
+        </div>
+        <div class="flow-arrow"><svg width="18" height="28" viewBox="0 0 18 28" fill="none"><path d="M9 0v20M2 14l7 10 7-10" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="flow-node">
+          <div class="flow-box live-box"><span>5</span> Operator &amp; Circle Detect <span class="fn">→ opid + state_code</span></div>
+        </div>
+        <div class="flow-arrow"><svg width="18" height="28" viewBox="0 0 18 28" fill="none"><path d="M9 0v20M2 14l7 10 7-10" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg></div>
+
+        <div class="flow-branch">
+          <div class="flow-branch-title">Plan selection (optional)</div>
+          <div class="flow-branch-row">
+            <div class="flow-box optional-box" style="min-width:0;padding:7px 14px;font-size:.82rem;">6a — Show Plans → Recharge Plan Fetch</div>
+          </div>
+          <div class="flow-branch-row" style="color:var(--muted);font-size:.82rem;">or: Customer enters amount manually</div>
+          <div class="flow-branch-row" style="color:var(--muted);font-size:.82rem;">→ Both paths lead to Step 7</div>
+        </div>
+
+        <div class="flow-arrow"><svg width="18" height="28" viewBox="0 0 18 28" fill="none"><path d="M9 0v20M2 14l7 10 7-10" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="flow-node">
+          <div class="flow-box payment-box"><span>7</span> Prepaid / DTH Recharge</div>
+        </div>
+        <div class="flow-arrow"><svg width="18" height="28" viewBox="0 0 18 28" fill="none"><path d="M9 0v20M2 14l7 10 7-10" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg></div>
+
+        <div class="flow-branch">
+          <div class="flow-branch-title">Response handling</div>
+          <div class="flow-branch-row"><span class="status-badge s-success">SUCCESS</span> <span style="font-size:.83rem;">→ update records + notify customer</span></div>
+          <div class="flow-branch-row"><span class="status-badge s-failure">FAILURE</span> <span style="font-size:.83rem;">→ show failure, do not retry same order_id</span></div>
+          <div class="flow-branch-row"><span class="status-badge s-pending">PENDING</span> <span style="font-size:.83rem;">→ Step 8 Transaction Status (poll, optional)</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ QUICK REF ═════════════ -->
+  <div class="quick-ref">
+    <h2>⚡ Quick Reference</h2>
+    <div class="qr-row">
+      <div class="qr-num" style="background:var(--brand)">1</div>
+      <div class="qr-name">Service Category List</div>
+      <div class="qr-file">service-category-list</div>
+      <div class="qr-when">Setup</div>
+      <div class="qr-cache">Cache: Weekly</div>
+    </div>
+    <div class="qr-row">
+      <div class="qr-num" style="background:var(--brand)">2</div>
+      <div class="qr-name">Biller List</div>
+      <div class="qr-file">biller-list</div>
+      <div class="qr-when">Setup</div>
+      <div class="qr-cache">Cache: Weekly</div>
+    </div>
+    <div class="qr-row">
+      <div class="qr-num" style="background:var(--brand)">3</div>
+      <div class="qr-name">Biller Details</div>
+      <div class="qr-file">biller-details</div>
+      <div class="qr-when">Setup</div>
+      <div class="qr-cache">Cache: Weekly</div>
+    </div>
+    <div class="qr-row">
+      <div class="qr-num" style="background:var(--brand)">4</div>
+      <div class="qr-name">Circle Codes</div>
+      <div class="qr-file">circle-codes</div>
+      <div class="qr-when">Setup</div>
+      <div class="qr-cache">Cache: Monthly</div>
+    </div>
+    <div class="qr-row">
+      <div class="qr-num" style="background:var(--live-accent)">5</div>
+      <div class="qr-name">Operator &amp; Circle Detect</div>
+      <div class="qr-file">operator-circle-detect</div>
+      <div class="qr-when">Per recharge</div>
+      <div class="qr-cache">No cache</div>
+    </div>
+    <div class="qr-row">
+      <div class="qr-num" style="background:#7c8da6">6</div>
+      <div class="qr-name">Recharge Plans <em style="font-weight:400;color:var(--muted)">(optional)</em></div>
+      <div class="qr-file">mobile-recharge-plans</div>
+      <div class="qr-when">Per recharge</div>
+      <div class="qr-cache">Short TTL</div>
+    </div>
+    <div class="qr-row">
+      <div class="qr-num" style="background:var(--warn)">7</div>
+      <div class="qr-name">Prepaid / DTH Recharge</div>
+      <div class="qr-file">prepaid-dth-recharge</div>
+      <div class="qr-when">Payment</div>
+      <div class="qr-cache">No cache</div>
+    </div>
+    <div class="qr-row">
+      <div class="qr-num" style="background:#7c8da6">8</div>
+      <div class="qr-name">Transaction Status <em style="font-weight:400;color:var(--muted)">(optional)</em></div>
+      <div class="qr-file">transaction-status</div>
+      <div class="qr-when">If PENDING</div>
+      <div class="qr-cache">No cache</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ SUPPORT ═══════════════ -->
+  <div class="support">
+    <h2>Support</h2>
+    <div class="support-grid">
+      <a class="support-item" href="https://wa.me/917070300613?text=Hi%2C+I+need+help+in+API+docs.+I+am+exploring+the+*GitHub+India+SDK*+%F0%9F%91%89+https%3A%2F%2Fgithub.com%2Fyoflic%2FKwikAPI-India">
+        <div class="support-icon">💬</div>
+        <div><div class="support-label">WhatsApp</div><div class="support-val">+91-7070300613</div></div>
+      </a>
+      <a class="support-item" href="mailto:support@kwikapi.com">
+        <div class="support-icon">📧</div>
+        <div><div class="support-label">Email</div><div class="support-val">support@kwikapi.com</div></div>
+      </a>
+      <div class="support-item">
+        <div class="support-icon">📞</div>
+        <div><div class="support-label">Toll Free</div><div class="support-val">18008890016</div></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<footer>
+  KwikAPI v3.0.1 — by Yoflic India Pvt Ltd &nbsp;·&nbsp;
+  <a href="https://github.com/yoflic/KwikAPI-India" style="color:var(--brand);text-decoration:none;">github.com/yoflic/KwikAPI-India</a>
+</footer>
+
+</body>
+</html>

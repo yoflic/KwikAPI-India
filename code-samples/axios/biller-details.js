@@ -24,6 +24,8 @@ const BASE_URL = 'https://uat.kwikapi.com'; // Switch to https://www.kwikapi.com
 
 /**
  * Biller Details
+ * @param {string} api_key - (required) Your KwikAPI API key
+ * @param {string} opid - (required) Operator ID(s) — use '#' to separate multiple (e.g. '53#54#55')
  * @returns {Promise<object>} Parsed JSON response
  * @throws {Error} on HTTP or API-level error
  */
@@ -35,7 +37,6 @@ async function billerDetails(api_key = 'YOUR_API_KEY', opid = '53') {
   });
   const response = await axios.post(`${BASE_URL}/api/v2/operatorFetch.php`, params, {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' },
-    timeout: 30000,
   });
 
     const data = response.data;

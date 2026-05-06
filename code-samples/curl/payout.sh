@@ -10,6 +10,14 @@
 # NOTE: IP whitelisting required — use IP Detect API first.
 # NOTE: Validate beneficiary account using Bank Account Verification API before payout.
 #
+# Parameters:
+#   api_key            (required) Your KwikAPI API key
+#   account_no         (required) Beneficiary bank account number
+#   amount             (required) Transfer amount in INR
+#   order_id           (required) Your unique order ID
+#   ifsc_code          (required) Beneficiary bank IFSC code
+#   bene_name          (required) Beneficiary full name
+#
 # Environment:
 #   UAT (testing) : https://uat.kwikapi.com
 #   Production    : https://www.kwikapi.com  (change BASE_URL below)
@@ -34,7 +42,7 @@ kwik_payout() {
   -F 'order_id=YOUR_UNIQUE_ORDER_ID' \
   -F 'ifsc_code=SBIN0001234' \
   -F 'bene_name=Beneficiary Name' \
-  '"${{BASE_URL}}{api["path"]}"'
+  "${BASE_URL}/api/v2/payments/index.php"
   )
 
   echo "$response" | python3 -m json.tool 2>/dev/null || echo "$response"

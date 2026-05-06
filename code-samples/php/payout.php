@@ -59,7 +59,6 @@ function kwik_payout(string $api_key = 'YOUR_API_KEY', string $account_no = 'BEN
         'bene_name' => $bene_name,
         ]),
         CURLOPT_SSL_VERIFYPEER => true,
-        CURLOPT_TIMEOUT        => 60,
         CURLOPT_HTTPHEADER     => ['Accept: application/json'],
     ]);
 
@@ -84,7 +83,7 @@ function kwik_payout(string $api_key = 'YOUR_API_KEY', string $account_no = 'BEN
 try {
     $result = kwik_payout('YOUR_API_KEY', 'BENEFICIARY_ACCOUNT_NUMBER', '1000', 'YOUR_UNIQUE_ORDER_ID', 'SBIN0001234', 'Beneficiary Name');
 
-    if ($result['success'] ?? false) {
+    if (($result['status'] ?? '') === 'SUCCESS') {
         echo "Success: " . ($result['message'] ?? 'OK') . PHP_EOL;
         echo json_encode($result, JSON_PRETTY_PRINT) . PHP_EOL;
     } else {

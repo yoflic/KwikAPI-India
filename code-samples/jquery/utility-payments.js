@@ -1,12 +1,11 @@
 /**
  * KwikAPI SDK — Utility Payments (BBPS)
  * ─────────────────────────────────────────────────────────────────────────────
- * Processes all BBPS (Bharat Bill Payment System) utility bill payments — including Electricity, Water, Gas, Broadband, Landline, DTH, Insurance, Loan EMI, and more. IMPORTANT: Set HTTP timeout to 0. Always pass opt8='Bills' as required by the API. Pass additional operator-specific fields (opt1–opt10) as indicated in the Biller Details response. After submission, always confirm final status via Transaction Status API.
+ * Processes all BBPS (Bharat Bill Payment System) utility bill payments — including Electricity, Water, Gas, Broadband, Landline, DTH, Insurance, Loan EMI, and more. Always pass opt8='Bills' as required by the API. Pass additional operator-specific fields (opt1–opt10) as indicated in the Biller Details response. After submission, always confirm final status via Transaction Status API.
  *
  * Endpoint  : GET /api/v2/bills/payments.php
  * Group     : Payment APIs
  * Rate Limit: Per account
- * NOTE: Set HTTP timeout to 0 (no timeout).
  * NOTE: opt8 must always be 'Bills'.
  * NOTE: Always verify final status via Transaction Status API.
  *
@@ -22,6 +21,15 @@ const BASE_URL = 'https://uat.kwikapi.com'; // Switch to https://www.kwikapi.com
 
 /**
  * Utility Payments (BBPS)
+ * @param {string} api_key - (required) Your KwikAPI API key
+ * @param {string} number - (required) Consumer/account number
+ * @param {number} amount - (required) Bill amount in INR
+ * @param {int} opid - (required) Operator ID from Biller List API
+ * @param {string} order_id - (required) Your unique order ID
+ * @param {string} opt1-opt10 - (optional) Operator-specific additional fields (see Biller Details)
+ * @param {string} opt8 - (required) Must always be 'Bills'
+ * @param {string} refrence_id - (optional) Optional reference ID for reconciliation
+ * @param {string} mobile - (optional) Customer mobile for confirmation SMS
  * @returns {jQuery.Deferred} Resolves with parsed JSON response
  */
 function utilityPayments(api_key = 'YOUR_API_KEY', number = 'CONSUMER_NUMBER', amount = '500', opid = 'OPERATOR_ID', order_id = 'YOUR_UNIQUE_ORDER_ID', opt8 = 'Bills', mobile = '9999999999') {
@@ -32,10 +40,9 @@ function utilityPayments(api_key = 'YOUR_API_KEY', number = 'CONSUMER_NUMBER', a
     method:   'GET',
     data:     data,
     dataType: 'json',
-    timeout:  0,
   })
   .done(function (response) {
-    if (!response.success) {
+    if (response.status !== 'SUCCESS') {
       throw new Error('API error: ' + (response.message || 'Unknown error'));
     }
     return response;

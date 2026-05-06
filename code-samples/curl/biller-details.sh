@@ -9,6 +9,10 @@
 # Rate Limit: 20 / day
 # NOTE: Allowed for syncing/caching purposes only.
 #
+# Parameters:
+#   api_key            (required) Your KwikAPI API key
+#   opid               (required) Operator ID(s) — use '#' to separate multiple (e.g. '53#54#55')
+#
 # Environment:
 #   UAT (testing) : https://uat.kwikapi.com
 #   Production    : https://www.kwikapi.com  (change BASE_URL below)
@@ -29,7 +33,7 @@ kwik_biller_details() {
     curl -s -X POST \
   -F 'api_key=YOUR_API_KEY' \
   -F 'opid=53' \
-  '"${{BASE_URL}}{api["path"]}"'
+  "${BASE_URL}/api/v2/operatorFetch.php"
   )
 
   echo "$response" | python3 -m json.tool 2>/dev/null || echo "$response"

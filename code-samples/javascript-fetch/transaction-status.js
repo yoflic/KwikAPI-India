@@ -24,7 +24,8 @@ const BASE_URL = 'https://uat.kwikapi.com'; // Switch to https://www.kwikapi.com
 
 /**
  * Transaction Status
- * @param  {api_key = 'YOUR_API_KEY', order_id = 'YOUR_ORDER_ID'}
+ * @param {string} api_key - (required) Your KwikAPI API key
+ * @param {string} order_id - (required) Your unique order ID used during the payment request
  * @returns {Promise<object>}
  */
 async function transactionStatus(api_key = 'YOUR_API_KEY', order_id = 'YOUR_ORDER_ID') {
@@ -44,7 +45,7 @@ async function transactionStatus(api_key = 'YOUR_API_KEY', order_id = 'YOUR_ORDE
 
     const data = await response.json();
 
-    if (!data.success) {
+    if (!data.response) {
       throw new Error(`API error: ${data.message || 'Unknown error'}`);
     }
 

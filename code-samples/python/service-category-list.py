@@ -42,13 +42,12 @@ def service_category_list(api_key: str = 'YOUR_API_KEY') -> dict[str, Any]:
     Raises:
         KwikAPIError: If the API returns success=false.
         requests.HTTPError: On non-2xx HTTP status.
-        requests.Timeout: If the request exceeds the timeout.
     """
     url = BASE_URL + "/api/v2/Service-Category-List.php"
 
     with requests.Session() as session:
         session.headers.update({"Accept": "application/json"})
-        response = session.post(url, data={'api_key': api_key}, timeout=30)
+        response = session.post(url, data={'api_key': api_key})
 
     response.raise_for_status()
     data = response.json()

@@ -20,6 +20,8 @@ const BASE_URL = 'https://uat.kwikapi.com'; // Switch to https://www.kwikapi.com
 
 /**
  * Operator & Circle Detect
+ * @param {string} api_key - (required) Your KwikAPI API key
+ * @param {string} number - (required) 10-digit Indian mobile number
  * @returns {jQuery.Deferred} Resolves with parsed JSON response
  */
 function operatorCircleDetect(api_key = 'YOUR_API_KEY', number = '9999999999') {
@@ -30,7 +32,6 @@ function operatorCircleDetect(api_key = 'YOUR_API_KEY', number = '9999999999') {
     method:   'POST',
     data:     data,
     dataType: 'json',
-    timeout:  30000,
   })
   .done(function (response) {
     if (!response.success) {

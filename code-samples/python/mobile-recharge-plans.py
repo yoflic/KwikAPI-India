@@ -29,7 +29,7 @@ class KwikAPIError(Exception):
     """Raised when the KwikAPI returns a non-success response."""
 
 
-def mobile_recharge_plans(api_key: str = 'YOUR_API_KEY', state_code: str = 'MH', opid: str = '1') -> dict[str, Any]:
+def mobile_recharge_plans(api_key: str = 'YOUR_API_KEY', state_code: str = '4', opid: str = '1') -> dict[str, Any]:
     """
     Mobile Recharge Plans
 
@@ -44,13 +44,12 @@ def mobile_recharge_plans(api_key: str = 'YOUR_API_KEY', state_code: str = 'MH',
     Raises:
         KwikAPIError: If the API returns success=false.
         requests.HTTPError: On non-2xx HTTP status.
-        requests.Timeout: If the request exceeds the timeout.
     """
     url = BASE_URL + "/api/v2/recharge_plans.php"
 
     with requests.Session() as session:
         session.headers.update({"Accept": "application/json"})
-        response = session.post(url, data={'api_key': api_key, 'state_code': state_code, 'opid': opid}, timeout=30)
+        response = session.post(url, data={'api_key': api_key, 'state_code': state_code, 'opid': opid})
 
     response.raise_for_status()
     data = response.json()
@@ -64,7 +63,7 @@ def mobile_recharge_plans(api_key: str = 'YOUR_API_KEY', state_code: str = 'MH',
 # ── Example usage ─────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     try:
-        result = mobile_recharge_plans('YOUR_API_KEY', 'MH', '1')
+        result = mobile_recharge_plans('YOUR_API_KEY', '4', '1')
         import json
         print(json.dumps(result, indent=2))
     except KwikAPIError as e:

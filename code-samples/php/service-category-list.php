@@ -42,7 +42,6 @@ function kwik_service_category_list(string $api_key = 'YOUR_API_KEY'): array
         'api_key' => $api_key,
         ]),
         CURLOPT_SSL_VERIFYPEER => true,
-        CURLOPT_TIMEOUT        => 30,
         CURLOPT_HTTPHEADER     => ['Accept: application/json'],
     ]);
 

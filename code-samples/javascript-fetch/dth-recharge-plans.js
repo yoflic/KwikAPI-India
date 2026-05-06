@@ -23,7 +23,8 @@ const BASE_URL = 'https://uat.kwikapi.com'; // Switch to https://www.kwikapi.com
 
 /**
  * DTH Recharge Plans
- * @param  {api_key = 'YOUR_API_KEY', opid = 'DTH_OPERATOR_ID'}
+ * @param {string} api_key - (required) Your KwikAPI API key
+ * @param {int} opid - (required) DTH operator ID from Biller List API
  * @returns {Promise<object>}
  */
 async function dthRechargePlans(api_key = 'YOUR_API_KEY', opid = 'DTH_OPERATOR_ID') {

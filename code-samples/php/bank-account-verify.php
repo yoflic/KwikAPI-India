@@ -55,7 +55,6 @@ function kwik_bank_account_verify(string $api_key = 'YOUR_API_KEY', string $numb
         'order_id' => $order_id,
         ]),
         CURLOPT_SSL_VERIFYPEER => true,
-        CURLOPT_TIMEOUT        => 30,
         CURLOPT_HTTPHEADER     => ['Accept: application/json'],
     ]);
 

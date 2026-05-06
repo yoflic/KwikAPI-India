@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KwikAPI v3.0.1 — API Reference</title>
+<style>
+  :root {
+    --brand:       #1a73e8;
+    --brand-dark:  #1557b0;
+    --brand-light: #e8f0fe;
+    --green:       #1e8a4a;
+    --green-bg:    #e6f4ea;
+    --orange:      #e65c00;
+    --orange-bg:   #fff3e0;
+    --red:         #c62828;
+    --red-bg:      #ffebee;
+    --purple:      #6a1b9a;
+    --purple-bg:   #f3e5f5;
+    --teal:        #00796b;
+    --teal-bg:     #e0f2f1;
+    --grey:        #5f6368;
+    --grey-bg:     #f5f5f5;
+    --border:      #dadce0;
+    --text:        #202124;
+    --text-muted:  #5f6368;
+    --white:       #ffffff;
+    --shadow:      0 2px 8px rgba(0,0,0,.10);
+    --radius:      10px;
+    --font:        'Segoe UI', system-ui, -apple-system, sans-serif;
+    --mono:        'SF Mono', 'Fira Code', 'Consolas', monospace;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); color: var(--text); background: #f8f9fa; line-height: 1.6; font-size: 15px; }
+
+  /* ── Layout ── */
+  .page-wrapper { display: flex; min-height: 100vh; }
+  nav.sidebar {
+    width: 280px; min-width: 260px; background: #fff; border-right: 1px solid var(--border);
+    position: sticky; top: 0; height: 100vh; overflow-y: auto; padding-bottom: 40px;
+    scrollbar-width: thin;
+  }
+  nav.sidebar::-webkit-scrollbar { width: 5px; }
+  nav.sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  .sidebar-header {
+    padding: 22px 20px 16px; background: var(--brand); color: #fff; position: sticky; top: 0; z-index: 1;
+  }
+  .sidebar-header h1 { font-size: 17px; font-weight: 700; letter-spacing: -.3px; }
+  .sidebar-header p { font-size: 12px; opacity: .8; margin-top: 3px; }
+  .sidebar-section-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--text-muted); padding: 18px 20px 4px;
+  }
+  nav.sidebar a {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 20px; font-size: 13.5px; color: var(--text); text-decoration: none;
+    border-left: 3px solid transparent; transition: all .15s;
+  }
+  nav.sidebar a:hover { background: var(--brand-light); color: var(--brand); border-left-color: var(--brand); }
+  nav.sidebar a .badge {
+    font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 10px;
+    background: var(--grey-bg); color: var(--grey); flex-shrink: 0;
+  }
+  nav.sidebar a.payment .badge { background: #fff3e0; color: var(--orange); }
+  nav.sidebar a.verify .badge { background: var(--green-bg); color: var(--green); }
+  nav.sidebar a.utility .badge { background: var(--teal-bg); color: var(--teal); }
+
+  main { flex: 1; padding: 32px 36px 60px; max-width: 1000px; }
+  @media (max-width: 780px) {
+    .page-wrapper { flex-direction: column; }
+    nav.sidebar { width: 100%; height: auto; position: relative; }
+    main { padding: 24px 16px 40px; }
+  }
+
+  /* ── Page Header ── */
+  .page-header {
+    background: linear-gradient(135deg, var(--brand) 0%, #0d47a1 100%);
+    color: #fff; padding: 36px 40px; border-radius: var(--radius); margin-bottom: 32px;
+    box-shadow: var(--shadow);
+  }
+  .page-header h1 { font-size: 28px; font-weight: 800; letter-spacing: -.5px; }
+  .page-header p { font-size: 15px; opacity: .9; margin-top: 8px; }
+  .env-row { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+  .env-pill {
+    background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.3);
+    padding: 6px 14px; border-radius: 20px; font-size: 13px; font-family: var(--mono);
+  }
+  .env-pill span { opacity: .7; margin-right: 4px; font-family: var(--font); }
+
+  /* ── API Cards ── */
+  .group-header {
+    font-size: 13px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase;
+    color: var(--brand); border-bottom: 2px solid var(--brand); padding-bottom: 6px;
+    margin: 36px 0 20px;
+  }
+  .group-header:first-of-type { margin-top: 0; }
+  .api-card {
+    background: #fff; border: 1px solid var(--border); border-radius: var(--radius);
+    margin-bottom: 24px; box-shadow: var(--shadow); overflow: hidden;
+  }
+  .api-card-header {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 20px 24px; border-bottom: 1px solid var(--border);
+    background: #fafbfc; cursor: pointer; user-select: none;
+  }
+  .api-num {
+    width: 34px; height: 34px; border-radius: 50%; background: var(--brand); color: #fff;
+    font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .api-num.pay { background: var(--orange); }
+  .api-num.ver { background: var(--green); }
+  .api-num.util { background: var(--teal); }
+  .api-title { flex: 1; }
+  .api-title h2 { font-size: 17px; font-weight: 700; line-height: 1.3; }
+  .api-title p { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+  .api-meta { display: flex; gap: 8px; flex-wrap: wrap; flex-shrink: 0; align-items: flex-start; }
+  .badge-pill {
+    font-size: 11.5px; font-weight: 700; padding: 3px 10px; border-radius: 12px; white-space: nowrap;
+  }
+  .method-get  { background: var(--green-bg);  color: var(--green); }
+  .method-post { background: var(--orange-bg); color: var(--orange); }
+  .rate-pill   { background: var(--grey-bg);   color: var(--grey); font-weight: 600; }
+  .warn-pill   { background: var(--red-bg);    color: var(--red); }
+
+  .api-card-body { padding: 20px 24px; }
+  .endpoint-block {
+    display: flex; align-items: center; gap: 10px; background: #f5f7ff;
+    border: 1px solid #c5d0f5; border-radius: 7px; padding: 10px 16px; margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+  .endpoint-block .method-tag {
+    font-family: var(--mono); font-size: 12px; font-weight: 700; padding: 2px 8px;
+    border-radius: 5px; flex-shrink: 0;
+  }
+  .endpoint-block .url { font-family: var(--mono); font-size: 13px; color: var(--brand-dark); word-break: break-all; }
+  .use-text { font-size: 14px; color: var(--text-muted); margin-bottom: 18px; line-height: 1.5; }
+
+  /* ── Tables ── */
+  .table-wrap { overflow-x: auto; margin-bottom: 18px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  thead th {
+    background: var(--brand); color: #fff; text-align: left;
+    padding: 10px 14px; font-weight: 700; font-size: 12px; letter-spacing: .3px;
+  }
+  thead th:first-child { border-radius: 7px 0 0 0; }
+  thead th:last-child  { border-radius: 0 7px 0 0; }
+  tbody tr { border-bottom: 1px solid var(--border); }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #f8faff; }
+  tbody td { padding: 10px 14px; vertical-align: top; }
+  tbody td:first-child { font-family: var(--mono); font-size: 12.5px; color: var(--brand-dark); font-weight: 600; }
+  .req-yes { color: var(--green); font-weight: 700; }
+  .req-opt { color: var(--text-muted); }
+  .req-fixed { color: var(--orange); font-weight: 700; }
+  .highlight-row td { background: #fff8e1; }
+  .highlight-row td:first-child { color: var(--orange); }
+
+  /* ── Code Blocks ── */
+  .code-section { margin-top: 10px; }
+  .code-section h4 { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .4px; }
+  .code-block {
+    background: #1e1e2e; color: #cdd6f4; font-family: var(--mono); font-size: 12.5px;
+    padding: 16px 20px; border-radius: 8px; overflow-x: auto; line-height: 1.6;
+    border: 1px solid #313244;
+  }
+  .c-key   { color: #89b4fa; }
+  .c-str   { color: #a6e3a1; }
+  .c-num   { color: #fab387; }
+  .c-bool  { color: #f38ba8; }
+  .c-muted { color: #6c7086; }
+  .c-null  { color: #cba6f7; }
+
+  /* ── Notes ── */
+  .note {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 12px 16px; border-radius: 7px; font-size: 13.5px; margin-top: 14px;
+  }
+  .note.warn  { background: #fff3e0; border-left: 4px solid var(--orange); }
+  .note.info  { background: var(--brand-light); border-left: 4px solid var(--brand); }
+  .note.ok    { background: var(--green-bg); border-left: 4px solid var(--green); }
+  .note.danger{ background: var(--red-bg); border-left: 4px solid var(--red); }
+  .note-icon  { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  /* ── Status Tables ── */
+  .status-table thead th { background: var(--grey); }
+  .status-ok  { color: var(--green); font-weight: 700; }
+  .status-err { color: var(--red); font-weight: 700; }
+  .status-pend{ color: var(--orange); font-weight: 700; }
+
+  /* ── Summary Table ── */
+  .summary-table thead th { background: #37474f; }
+
+  /* ── Footer ── */
+  footer {
+    background: #fff; border-top: 1px solid var(--border);
+    padding: 28px 36px; margin-top: 40px; border-radius: var(--radius);
+    display: flex; flex-wrap: wrap; gap: 24px; align-items: center;
+  }
+  footer h3 { font-size: 15px; font-weight: 700; margin-bottom: 10px; }
+  .support-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .support-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 18px; border-radius: 24px; font-size: 13.5px; font-weight: 600;
+    text-decoration: none; transition: opacity .15s;
+  }
+  .support-btn:hover { opacity: .85; }
+  .btn-wa    { background: #25D366; color: #fff; }
+  .btn-phone { background: #1a73e8; color: #fff; }
+  .btn-email { background: #ea4335; color: #fff; }
+
+  .chevron { font-size: 12px; color: var(--text-muted); }
+</style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+  <!-- ── Sidebar ── -->
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <h1>KwikAPI v3.0.1</h1>
+      <p>API Reference — 17 Endpoints</p>
+    </div>
+
+    <div class="sidebar-section-label">Fetching APIs</div>
+    <a href="#api-1"><span class="badge">1</span> Service Category List</a>
+    <a href="#api-2"><span class="badge">2</span> Biller List</a>
+    <a href="#api-3"><span class="badge">3</span> Biller Details</a>
+    <a href="#api-4"><span class="badge">4</span> Circle Codes</a>
+    <a href="#api-5"><span class="badge">5</span> Bill Fetch</a>
+    <a href="#api-6"><span class="badge">6</span> Wallet Balance</a>
+    <a href="#api-7"><span class="badge">7</span> Transaction Status</a>
+    <a href="#api-8"><span class="badge">8</span> Last 100 Transactions</a>
+    <a href="#api-9"><span class="badge">9</span> Operator &amp; Circle Detect</a>
+    <a href="#api-10"><span class="badge">10</span> Mobile Recharge Plans</a>
+    <a href="#api-11"><span class="badge">11</span> DTH Recharge Plans</a>
+    <a href="#api-12"><span class="badge">12</span> R-Offer Check</a>
+
+    <div class="sidebar-section-label">Payment APIs</div>
+    <a href="#api-13" class="payment"><span class="badge">13</span> Prepaid / DTH Recharge<span class="badge" style="margin-left:auto;">PAY</span></a>
+    <a href="#api-14" class="payment"><span class="badge">14</span> Utility Payments (BBPS)<span class="badge" style="margin-left:auto;">PAY</span></a>
+    <a href="#api-15" class="payment"><span class="badge">15</span> Payout<span class="badge" style="margin-left:auto;">PAY</span></a>
+
+    <div class="sidebar-section-label">Verification</div>
+    <a href="#api-16" class="verify"><span class="badge">16</span> Bank Account Verify<span class="badge" style="margin-left:auto;">VER</span></a>
+
+    <div class="sidebar-section-label">Utility</div>
+    <a href="#api-17" class="utility"><span class="badge">17</span> IP Detect<span class="badge" style="margin-left:auto;">UTL</span></a>
+  </nav>
+
+  <!-- ── Main Content ── -->
+  <main>
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1>API Reference</h1>
+      <p>Complete parameter reference for all 17 KwikAPI endpoints — India Bill Payments &amp; Recharges</p>
+      <div class="env-row">
+        <div class="env-pill"><span>UAT</span>https://uat.kwikapi.com</div>
+        <div class="env-pill"><span>PROD</span>https://www.kwikapi.com</div>
+        <div class="env-pill"><span>Auth</span>api_key in body (POST) or query (GET)</div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════ FETCHING GROUP ═══════════════════════ -->
+    <div class="group-header">Fetching APIs</div>
+
+    <!-- ── API 1 ── -->
+    <div class="api-card" id="api-1">
+      <div class="api-card-header">
+        <div class="api-num">1</div>
+        <div class="api-title">
+          <h2>Service Category List</h2>
+          <p>Fetch all active service categories available on the platform</p>
+        </div>
+        <div class="api-meta">
+          <span class="badge-pill method-post">POST</span>
+          <span class="badge-pill rate-pill">10 / day</span>
+        </div>
+      </div>
+      <div class="api-card-body">
+        <div class="endpoint-block">
+          <span class="method-tag method-post">POST</span>
+          <span class="url">/api/v2/Service-Category-List.php</span>
+        </div>
+        <p class="use-text">Use once during setup to populate your UI or sync your local service list. Refresh weekly or when adding new service types.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td>api_key</td><td>string</td><td class="req-yes">✅ Required</td><td>Your KwikAPI API key</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="code-section">
+          <h4>Sample Response</h4>
+          <div class="code-block">
+{<br>
+&nbsp;&nbsp;<span class="c-key">"success"</span>: <span class="c-bool">true</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"status"</span>: <span class="c-str">"SUCCESS"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"total"</span>: <span class="c-num">33</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"categories"</span>: [<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="c-key">"service_name"</span>: <span class="c-str">"Prepaid"</span>, <span class="c-key">"total_operators"</span>: <span class="c-num">32</span> },<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="c-key">"service_name"</span>: <span class="c-str">"DTH"</span>, <span class="c-key">"total_operators"</span>: <span class="c-num">17</span> },<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="c-key">"service_name"</span>: <span class="c-str">"Electricity"</span>, <span class="c-key">"total_operators"</span>: <span class="c-num">127</span> }<br>
+&nbsp;&nbsp;],<br>
+&nbsp;&nbsp;<span class="c-key">"rate_limit"</span>: { <span class="c-key">"limit"</span>: <span class="c-num">10</span>, <span class="c-key">"used"</span>: <span class="c-num">1</span>, <span class="c-key">"remaining"</span>: <span class="c-num">9</span> }<br>
+}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── API 2 ── -->
+    <div class="api-card" id="api-2">
+      <div class="api-card-header">
+        <div class="api-num">2</div>
+        <div class="api-title">
+          <h2>Biller List</h2>
+          <p>Fetch all billers with operator codes and service categories</p>
+        </div>
+        <div class="api-meta">
+          <span class="badge-pill method-get">GET</span>
+          <span class="badge-pill rate-pill">20 / day</span>
+        </div>
+      </div>
+      <div class="api-card-body">
+        <div class="endpoint-block">
+          <span class="method-tag method-get">GET</span>
+          <span class="url">/api/v2/operator_codes.php</span>
+        </div>
+        <p class="use-text">Fetch all active billers. Store locally and refresh weekly. Filter by <code>service</code> to narrow results. Use <code>opid</code> values in all payment and fetch APIs.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td>api_key</td><td>string</td><td class="req-yes">✅ Required</td><td>Your KwikAPI API key</td></tr>
+              <tr><td>service</td><td>string</td><td class="req-opt">Optional</td><td>Filter by service category (e.g. <code>Prepaid</code>, <code>Electricity</code>, <code>DTH</code>)</td></tr>
+              <tr><td>page</td><td>int</td><td class="req-opt">Optional</td><td>Page number for pagination (default: <code>1</code>)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="code-section">
+          <h4>Sample Response</h4>
+          <div class="code-block">
+
+
+{<br>
+&nbsp;&nbsp;<span class="c-key">"status"</span>:&nbsp;<span class="c-str">"SUCCESS"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"response"</span>:&nbsp;[<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"operator_name"</span>:&nbsp;<span class="c-str">"Airtel"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"operator_id"</span>:&nbsp;<span class="c-str">"1"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"service_type"</span>:&nbsp;<span class="c-str">"Prepaid"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"status"</span>:&nbsp;<span class="c-str">"1"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"biller_status"</span>:&nbsp;<span class="c-str">"on"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"bill_fetch"</span>:&nbsp;<span class="c-str">"NO"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"supportValidation"</span>:&nbsp;<span class="c-str">"NOT_SUPPORTED"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"bbps_enabled"</span>:&nbsp;<span class="c-str">"NO"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"amount_minimum"</span>:&nbsp;<span class="c-str">"10"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"amount_maximum"</span>:&nbsp;<span class="c-str">"10000"</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;]<br>
+}
+          
+          
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── API 3 ── -->
+    <div class="api-card" id="api-3">
+      <div class="api-card-header">
+        <div class="api-num">3</div>
+        <div class="api-title">
+          <h2>Biller Details</h2>
+          <p>Fetch full details for one or more operators including required fields</p>
+        </div>
+        <div class="api-meta">
+          <span class="badge-pill method-post">POST</span>
+          <span class="badge-pill rate-pill">20 / day</span>
+        </div>
+      </div>
+      <div class="api-card-body">
+        <div class="endpoint-block">
+          <span class="method-tag method-post">POST</span>
+          <span class="url">/api/v2/operatorFetch.php</span>
+        </div>
+        <p class="use-text">Get deep details for a specific operator. Supports batch lookup — separate multiple <code>opid</code> values with <code>#</code>. The <code>required_params</code> array maps directly to <code>opt1</code>–<code>opt10</code> fields in payment APIs.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td>api_key</td><td>string</td><td class="req-yes">✅ Required</td><td>Your KwikAPI API key</td></tr>
+              <tr><td>opid</td><td>string</td><td class="req-yes">✅ Required</td><td>Operator ID(s). Batch: separate with <code>#</code> (e.g. <code>53#54#55</code>)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note info"><span class="note-icon">💡</span><div>Key fields to store: <strong>bill_fetch_supported</strong> (drives Bill Fetch decision) and <strong>required_params</strong> (maps to opt1–opt10 in payment APIs).</div></div>
+      </div>
+    </div>
+
+    <!-- ── API 4 ── -->
+    <div class="api-card" id="api-4">
+      <div class="api-card-header">
+        <div class="api-num">4</div>
+        <div class="api-title">
+          <h2>Circle Codes</h2>
+          <p>Fetch all India telecom circle codes for recharge routing</p>
+        </div>
+        <div class="api-meta">
+          <span class="badge-pill method-get">GET</span>
+          <span class="badge-pill rate-pill">2 / day</span>
+        </div>
+      </div>
+      <div class="api-card-body">
+        <div class="endpoint-block">
+          <span class="method-tag method-get">GET</span>
+          <span class="url">/api/v2/circle_codes.php</span>
+        </div>
+        <p class="use-text">Fetch all Indian telecom circle codes. Cache locally — this data changes very rarely. Use <code>circle_code</code> values as <code>state_code</code> in Recharge and Recharge Plans APIs.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td>api_key</td><td>string</td><td class="req-yes">✅ Required</td><td>Your KwikAPI API key</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note warn"><span class="note-icon">⚠️</span><div>Rate limit is only <strong>2 / day</strong>. Always cache the response and avoid calling this on every page load.</div></div>
+      </div>
+    </div>
+
+    <!-- ── API 5 ── -->
+    <div class="api-card" id="api-5">
+      <div class="api-card-header">
+        <div class="api-num">5</div>
+        <div class="api-title">
+          <h2>Bill Fetch</h2>
+          <p>Fetch outstanding bill amount and consumer details from the biller</p>
+        </div>
+        <div class="api-meta">
+          <span class="badge-pill method-get">GET</span>
+          <span class="badge-pill rate-pill">Per account</span>
+        </div>
+      </div>
+      <div class="api-card-body">
+        <div class="endpoint-block">
+          <span class="method-tag method-get">GET</span>
+          <span class="url">/api/v2/bills/validation.php</span>
+        </div>
+        <p class="use-text">Fetch live bill details before payment. Only call if <code>bill_fetch_supported = true</code> in Biller Details. Displays due amount and consumer name to your user before they confirm payment.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td>api_key</td><td>string</td><td class="req-yes">✅ Required</td><td>Your KwikAPI API key</td></tr>
+              <tr><td>number</td><td>string</td><td class="req-yes">✅ Required</td><td>Consumer / account / registered mobile number</td></tr>
+              <tr><td>amount</td><td>number</td><td class="req-opt">Optional</td><td>Pre-filled amount. Pass <code>0</code> if unknown</td></tr>
+              <tr><td>opid</td><td>int</td><td class="req-yes">✅ Required</td><td>Operator ID from Biller List API</td></tr>
+              <tr><td>order_id</td><td>string</td><td class="req-yes">✅ Required</td><td>Your unique reference ID for this fetch request</td></tr>
+              <tr><td>opt1–opt10</td><td>string</td><td class="req-opt">Optional</td><td>Operator-specific fields (see <code>required_params</code> in Biller Details)</td></tr>
+              <tr><td>mobile</td><td>string</td><td class="req-opt">Optional</td><td>Customer mobile number for SMS confirmation</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="code-section">
+          <h4>Sample Response</h4>
+          <div class="code-block">
+
+
+
+
+
+
+{<br>
+&nbsp;&nbsp;<span class="c-key">"status"</span>:&nbsp;<span class="c-str">"SUCCESS"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"provider"</span>:&nbsp;<span class="c-str">"Jio Postpaid"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"message"</span>:&nbsp;<span class="c-str">"SUCCESS"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"due_amount"</span>:&nbsp;<span class="c-str">"1885.00"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"due_date"</span>:&nbsp;<span class="c-str">"13-07-2025"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"customer_name"</span>:&nbsp;<span class="c-str">"Anushka Verma"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"bill_number"</span>:&nbsp;<span class="c-str">"202006005985"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"bill_date"</span>:&nbsp;<span class="c-str">"28-06-2020"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"bill_period"</span>:&nbsp;<span class="c-str">"MONTHLY"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"ref_id"</span>:&nbsp;<span class="c-str">"61936"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"service"</span>:&nbsp;<span class="c-str">"Postpaid"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"Additional"</span>:&nbsp;<span class="c-str">""</span><br>
+}
+          
+          
+          
+          
+          
+          
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── API 6 ── -->
+    <div class="api-card" id="api-6">
+      <div class="api-card-header">
+        <div class="api-num">6</div>
+        <div class="api-title">
+          <h2>Wallet Balance</h2>
+          <p>Check your KwikAPI merchant wallet balance</p>
+        </div>
+        <div class="api-meta">
+          <span class="badge-pill method-get">GET</span>
+          <span class="badge-pill rate-pill">48 / day</span>
+        </div>
+      </div>
+      <div class="api-card-body">
+        <div class="endpoint-block">
+          <span class="method-tag method-get">GET</span>
+          <span class="url">/api/v2/balance.php</span>
+        </div>
+        <p class="use-text">Returns your current wallet balance in INR. Check before processing payments to ensure sufficient funds.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td>api_key</td><td>string</td><td class="req-yes">✅ Required</td><td>Your KwikAPI API key</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="code-section">
+          <h4>Sample Response</h4>
+          <div class="code-block">
+
+
+{<br>
+&nbsp;&nbsp;<span class="c-key">"response"</span>:&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"balance"</span>:&nbsp;<span class="c-str">"262.80"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"plan_credit"</span>:&nbsp;<span class="c-str">"1"</span><br>
+&nbsp;&nbsp;}<br>
+}
+          
+          
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── API 7 ── -->
+    <div class="api-card" id="api-7">
+      <div class="api-card-header">
+        <div class="api-num">7</div>
+        <div class="api-title">
+          <h2>Transaction Status</h2>
+          <p>Check the final status of any payment by your unique order ID</p>
+        </div>
+        <div class="api-meta">
+          <span class="badge-pill method-get">GET</span>
+          <span class="badge-pill rate-pill">100 / day</span>
+        </div>
+      </div>
+      <div class="api-card-body">
+        <div class="endpoint-block">
+          <span class="method-tag method-get">GET</span>
+          <span class="url">/api/v2/status.php</span>
+        </div>
+        <p class="use-text">Poll this after any payment API if the response is PENDING or unclear. Use your original <code>order_id</code> to look up the transaction.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td>api_key</td><td>string</td><td class="req-yes">✅ Required</td><td>Your KwikAPI API key</td></tr>
+              <tr><td>order_id</td><td>string</td><td class="req-yes">✅ Required</td><td>The unique order ID used during the original payment request</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="code-section">
+          <h4>Sample Response</h4>
+          <div class="code-block">
+
+
+{<br>
+&nbsp;&nbsp;<span class="c-key">"response"</span>:&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"order_id"</span>:&nbsp;<span class="c-str">"11554212"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"operator_ref"</span>:&nbsp;<span class="c-str">"4162140972233"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"opr_id"</span>:&nbsp;<span class="c-str">"416214093455"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"status"</span>:&nbsp;<span class="c-str">"SUCCESS"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"number"</span>:&nbsp;<span class="c-str">"9876523456"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"amount"</span>:&nbsp;<span class="c-str">"1"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"service"</span>:&nbsp;<span class="c-str">"Beneficiary Verification"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"charged_amount"</span>:&nbsp;<span class="c-str">"2.35"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"closing_balance"</span>:&nbsp;<span class="c-str">"312.15"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"available_balance"</span>:&nbsp;<span class="c-str">"0"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"date"</span>:&nbsp;<span class="c-str">"2024-06-10 14:23:53"</span><br>
+&nbsp;&nbsp;}<br>
+}
+          
+          
+          </div>
+        </div>
+        <div class="table-wrap" style="margin-top:16px;">
+          <table class="status-table">
+            <thead><tr><th>Status</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td class="status-ok">SUCCESS</td><td>Transaction completed successfully</td></tr>
+              <tr><td class="status-err">FAILURE</td><td>Transaction failed — do not retry with the same order_id</td></tr>
+              <tr><td class="status-pend">PENDING</td><td>Still processing — poll again after 30–60 s (max 3–5 retries)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── API 8 ── -->
+    <div class="api-card" id="api-8">
+      <div class="api-card-header">
+        <div class="api-num">8</div>
+        <div class="api-title">
+          <h2>Last 100 Transactions</h2>
+          <p>Fetch the latest 100 transactions in reverse chronological order</p>
+        </div>
+        <div class="api-meta">
+          <span class="badge-pill method-get">GET</span>
+          <span class="badge-pill rate-pill">48 / day</span>
+        </div>
+      </div>
+      <div class="api-card-body">
+        <div class="endpoint-block">
+          <span class="method-tag method-get">GET</span>
+          <span class="url">/api/v2/transactions.php</span>
+        </div>
+        <p class="use-text">Useful for dashboards, reconciliation, and support screens. Returns the most recent 100 transactions.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td>api_key</td><td>string</td><td class="req-yes">✅ Required</td><td>Your KwikAPI API key</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── API 9 ── -->
+    <div class="api-card" id="api-9">
+      <div class="api-card-header">
+        <div class="api-num">9</div>
+        <div class="api-title">
+          <h2>Operator &amp; Circle Detect</h2>
+          <p>Real-time MNP-aware operator and telecom circle detection</p>
+        </div>
+        <div class="api-meta">
+          <span class="badge-pill method-post">POST</span>
+          <span class="badge-pill rate-pill">Per account</span>
+        </div>
+      </div>
+      <div class="api-card-body">
+        <div class="endpoint-block">
+          <span class="method-tag method-post">POST</span>
+          <span class="url">/api/v2/operator_fetch_v2.php</span>
+        </div>
+        <p class="use-text">Detect real-time operator and telecom circle for any Indian mobile number. Fully MNP-aware — accounts for number portability.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td>api_key</td><td>string</td><td class="req-yes">✅ Required</td><td>Your KwikAPI API key</td></tr>
+              <tr><td>number</td><td>string</td><td class="req-yes">✅ Required</td><td>10-digit Indian mobile number</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="code-section">
+          <h4>Sample Response</h4>
+          <div class="code-block">
+
+
+
+
+{<br>
+&nbsp;&nbsp;<span class="c-key">"success"</span>:&nbsp;<span class="c-bool">true</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"message"</span>:&nbsp;<span class="c-null">null</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"credit_balance"</span>:&nbsp;<span class="c-str">"499"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"details"</span>:&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"provider"</span>:&nbsp;<span class="c-str">"VI"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"opid"</span>:&nbsp;<span class="c-str">"3"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"circle_code"</span>:&nbsp;<span class="c-str">"17"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"circle_name"</span>:&nbsp;<span class="c-str">"Bihar (BR)"</span><br>
+&nbsp;&nbsp;}<br>
+}
+          
+          
+          
+          
+          </div>
+        </div>
+        <div class="note danger"><span class="note-icon">🚨</span><div>Always call this before recharging. Never assume an operator from the number prefix — MNP subscribers will receive wrong recharges otherwise.</div></div>
+      </div>
+    </div>
+
+    <!-- ── API 10 ── -->
+    <div class="api-card" id="api-10">
+      <div class="api-card-header">
+        <div class="api-num">10</div>
+        <div class="api-title">
+          <h2>Mobile Recharge Plans</h2>
+          <p>Fetch all prepaid plans for an operator and telecom circle</p>
+        </div>
+        <div class="api-meta">
+          <span class="badge-pill method-post">POST</span>
+          <span class="badge-pill rate-pill">Per account</span>
+        </div>
+      </div>
+      <div class="api-card-body">
+        <div class="endpoint-block">
+          <span class="method-tag method-post">POST</span>
+          <span class="url">/api/v2/recharge_plans.php</span>
+        </div>
+        <p class="use-text">Fetch available prepaid recharge plans. Use <code>opid</code> and <code>circle_code</code> from Operator &amp; Circle Detect to get the right plan list.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td>api_key</td><td>string</td><td class="req-yes">✅ Required</td><td>Your KwikAPI API key</td></tr>
+              <tr><td>opid</td><td>int</td><td class="req-yes">✅ Required</td><td>Operator ID from Operator &amp; Circle Detect API</td></tr>
+              <tr><td>state_code</td><td>string</td><td class="req-yes">✅ Required</td><td>Telecom circle code (numeric, e.g. <code>4</code> for Maharashtra, <code>1</code> for Delhi) from Circle Codes API</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── API 11 ── -->
+    <div class="api-card" id="api-11">
+      <div class="api-card-header">
+        <div class="api-num">11</div>
+        <div class="api-title">
+          <h2>DTH Recharge Plans</h2>
+          <p>Fetch all available packs for a DTH/D2H operator</p>
+        </div>
+        <div class="api-meta">
+          <span class="badge-pill method-post">POST</span>
+          <span class="badge-pill rate-pill">Per account</span>
+        </div>
+      </div>
+      <div class="api-card-body">
+        <div class="endpoint-block">
+          <span class="method-tag method-post">POST</span>
+          <span class="url">/api/v2/DTH_plans.php</span>
+        </div>
+        <p class="use-text">Fetch all recharge packs available for a DTH operator. Use <code>opid</code> filtered from Biller List with <code>service=DTH</code>.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td>api_key</td><td>string</td><td class="req-yes">✅ Required</td><td>Your KwikAPI API key</td></tr>
+              <tr><td>opid</td><td>int</td><td class="req-yes">✅ Required</td><td>DTH operator ID from Biller List API (filter by <code>service=DTH</code>)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── API 12 ── -->
+    <div class="api-card" id="api-12">
+      <div class="api-card-header">
+        <div class="api-num">12</div>
+        <div class="api-title">
+          <h2>R-Offer Check</h2>
+          <p>Check active retention / special offers on a prepaid number</p>
+        </div>
+        <div class="api-meta">
+          <span class="badge-pill method-post">POST</span>
+          <span class="badge-pill rate-pill">Per account</span>
+          <span class="badge-pill warn-pill">Airtel &amp; VI only</span>
+        </div>
+      </div>
+      <div class="api-card-body">
+        <div class="endpoint-block">
+          <span class="method-tag method-post">POST</span>
+          <span class="url">/api/v2/R-OFFER_check.php</span>
+        </div>
+        <p class="use-text">Check if a prepaid number has any active R-Offers (retention/special offers). Supported networks: <strong>Airtel and VI (Vodafone Idea) only.</strong></p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td>api_key</td><td>string</td><td class="req-yes">✅ Required</td><td>Your KwikAPI API key</td></tr>
+              <tr><td>opid</td><td>int</td><td class="req-yes">✅ Required</td><td>Operator ID — must be Airtel or VI</td></tr>
+              <tr><td>mobile</td><td>string</td><td class="req-yes">✅ Required</td><td>10-digit prepaid mobile number to check offers for</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════ PAYMENT GROUP ═══════════════════════ -->
+    <div class="group-header">Payment APIs</div>
+
+    <!-- ── API 13 ── -->
+    <div class="api-card" id="api-13">
+      <div class="api-card-header">
+        <div class="api-num pay">13</div>
+        <div class="api-title">
+          <h2>Prepaid / DTH Recharge</h2>
+          <p>Initiate a prepaid mobile, DTH/D2H, or Datacard recharge</p>
+        </div>
+        <div class="api-meta">
+          <span class="badge-pill method-get">GET</span>
+          <span class="badge-pill rate-pill">Per account</span>
+        </div>
+      </div>
+      <div class="api-card-body">
+        <div class="endpoint-block">
+          <span class="method-tag method-get">GET</span>
+          <span class="url">/api/v2/recharge.php</span>
+        </div>
+        <p class="use-text">Initiate a recharge for prepaid mobile, DTH/D2H, or Datacard. Always call Operator &amp; Circle Detect first to get the correct <code>opid</code> and <code>state_code</code>.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td>api_key</td><td>string</td><td class="req-yes">✅ Required</td><td>Your KwikAPI API key</td></tr>
+              <tr><td>number</td><td>string</td><td class="req-yes">✅ Required</td><td>Customer mobile number or DTH subscriber ID</td></tr>
+              <tr><td>amount</td><td>number</td><td class="req-yes">✅ Required</td><td>Recharge amount in INR</td></tr>
+              <tr><td>opid</td><td>int</td><td class="req-yes">✅ Required</td><td>Operator ID from Operator &amp; Circle Detect API</td></tr>
+              <tr><td>state_code</td><td>string</td><td class="req-yes">✅ Required</td><td>Telecom circle code from Operator &amp; Circle Detect API</td></tr>
+              <tr><td>order_id</td><td>string</td><td class="req-yes">✅ Required</td><td>Your unique order ID — <strong>never reuse</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="code-section">
+          <h4>Sample Response</h4>
+          <div class="code-block">
+
+
+
+
+
+
+
+
+{<br>
+&nbsp;&nbsp;<span class="c-key">"status"</span>:&nbsp;<span class="c-str">"SUCCESS"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"order_id"</span>:&nbsp;<span class="c-str">"12011070"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"opr_id"</span>:&nbsp;<span class="c-str">"BRH2512201219430132"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"balance"</span>:&nbsp;<span class="c-str">"253.18"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"number"</span>:&nbsp;<span class="c-str">"7070300613"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"provider"</span>:&nbsp;<span class="c-str">"VI"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"amount"</span>:&nbsp;<span class="c-str">"10"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"charged_amount"</span>:&nbsp;<span class="c-str">"9.62"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"message"</span>:&nbsp;<span class="c-str">"SUCCESS"</span><br>
+}
+          
+          
+          
+          
+          
+          
+          
+          
+          </div>
+        </div>
+        <div class="note info"><span class="note-icon">💡</span><div>If status is <strong>PENDING</strong>, call <a href="#api-7">Transaction Status</a> with your <code>order_id</code> to poll for the final result.</div></div>
+      </div>
+    </div>
+
+    <!-- ── API 14 ── -->
+    <div class="api-card" id="api-14">
+      <div class="api-card-header">
+        <div class="api-num pay">14</div>
+        <div class="api-title">
+          <h2>Utility Payments (BBPS)</h2>
+          <p>Process any BBPS utility bill payment — 1000+ billers</p>
+        </div>
+        <div class="api-meta">
+          <span class="badge-pill method-get">GET</span>
+          <span class="badge-pill rate-pill">Per account</span>
+        </div>
+      </div>
+      <div class="api-card-body">
+        <div class="endpoint-block">
+          <span class="method-tag method-get">GET</span>
+          <span class="url">/api/v2/bills/payments.php</span>
+        </div>
+        <p class="use-text">Process utility bill payments through the BBPS network — Electricity, Water, Gas, Broadband, Landline, Insurance, Loan EMIs, Education Fees and 1000+ billers.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td>api_key</td><td>string</td><td class="req-yes">✅ Required</td><td>Your KwikAPI API key</td></tr>
+              <tr><td>number</td><td>string</td><td class="req-yes">✅ Required</td><td>Consumer / account number</td></tr>
+              <tr><td>amount</td><td>number</td><td class="req-yes">✅ Required</td><td>Bill amount in INR</td></tr>
+              <tr><td>opid</td><td>int</td><td class="req-yes">✅ Required</td><td>Operator ID from Biller List API</td></tr>
+              <tr><td>order_id</td><td>string</td><td class="req-yes">✅ Required</td><td>Your unique order ID — <strong>never reuse</strong></td></tr>
+              <tr class="highlight-row"><td>opt8</td><td>string</td><td class="req-fixed">🔒 Always "Bills"</td><td>Must always be <code>"Bills"</code> — fixed required value</td></tr>
+              <tr><td>opt1–opt7</td><td>string</td><td class="req-opt">Optional</td><td>Operator-specific fields (see <code>required_params</code> in Biller Details)</td></tr>
+              <tr><td>opt9–opt10</td><td>string</td><td class="req-opt">Optional</td><td>Operator-specific fields (see <code>required_params</code> in Biller Details)</td></tr>
+              <tr><td>refrence_id</td><td>string</td><td class="req-opt">Optional</td><td>Optional reconciliation reference</td></tr>
+              <tr><td>mobile</td><td>string</td><td class="req-opt">Optional</td><td>Customer mobile number for confirmation SMS</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin:16px 0 12px;font-size:13.5px;font-weight:600;">opt1–opt10 Common Mapping</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Field</th><th>Common Usage</th></tr></thead>
+            <tbody>
+              <tr><td>opt1</td><td>Consumer number / Account number</td></tr>
+              <tr><td>opt2</td><td>Consumer name / Account holder name</td></tr>
+              <tr><td>opt3</td><td>Mobile number / Registered phone</td></tr>
+              <tr><td>opt4</td><td>Email address</td></tr>
+              <tr><td>opt5</td><td>District / Sub-division / Zone</td></tr>
+              <tr><td>opt6</td><td>Bill date / Due date</td></tr>
+              <tr><td>opt7</td><td>Bill number / Reference number</td></tr>
+              <tr class="highlight-row"><td>opt8</td><td><strong>Always "Bills"</strong> (fixed, required)</td></tr>
+              <tr><td>opt9</td><td>Service type / Category</td></tr>
+              <tr><td>opt10</td><td>Additional biller-specific field</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note warn"><span class="note-icon">⚠️</span><div>The exact <code>opt</code> mapping varies per biller. Always use <code>required_params</code> from Biller Details as the source of truth — not this table.</div></div>
+        <div class="note info"><span class="note-icon">💡</span><div>If status is <strong>PENDING</strong>, call <a href="#api-7">Transaction Status</a> with your <code>order_id</code> to poll for the final result.</div></div>
+      </div>
+    </div>
+
+    <!-- ── API 15 ── -->
+    <div class="api-card" id="api-15">
+      <div class="api-card-header">
+        <div class="api-num pay">15</div>
+        <div class="api-title">
+          <h2>Payout (Money Transfer)</h2>
+          <p>Initiate a bank account payout via IMPS/NEFT</p>
+        </div>
+        <div class="api-meta">
+          <span class="badge-pill method-post">POST</span>
+          <span class="badge-pill rate-pill">Per account</span>
+          <span class="badge-pill warn-pill">IP Whitelist Required</span>
+        </div>
+      </div>
+      <div class="api-card-body">
+        <div class="endpoint-block">
+          <span class="method-tag method-post">POST</span>
+          <span class="url">/api/v2/payments/index.php</span>
+        </div>
+        <p class="use-text">Initiate a real-money bank transfer to a beneficiary account. Requires IP whitelisting and prior bank account verification.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td>api_key</td><td>string</td><td class="req-yes">✅ Required</td><td>Your KwikAPI API key</td></tr>
+              <tr><td>account_no</td><td>string</td><td class="req-yes">✅ Required</td><td>Beneficiary bank account number</td></tr>
+              <tr><td>amount</td><td>number</td><td class="req-yes">✅ Required</td><td>Transfer amount in INR</td></tr>
+              <tr><td>order_id</td><td>string</td><td class="req-yes">✅ Required</td><td>Your unique order ID — <strong>never reuse</strong></td></tr>
+              <tr><td>ifsc_code</td><td>string</td><td class="req-yes">✅ Required</td><td>Beneficiary bank IFSC code</td></tr>
+              <tr><td>bene_name</td><td>string</td><td class="req-yes">✅ Required</td><td>Beneficiary full name</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note danger"><span class="note-icon">🚨</span><div><strong>IP whitelisting required.</strong> Run <a href="#api-17">IP Detect</a> on your production server first, then whitelist that IP in your KwikAPI dashboard before calling this API.</div></div>
+        <div class="note warn"><span class="note-icon">⚠️</span><div>Always validate the beneficiary with <a href="#api-16">Bank Account Verification</a> before initiating a payout.</div></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════ VERIFICATION GROUP ═══════════════════════ -->
+    <div class="group-header">Verification APIs</div>
+
+    <!-- ── API 16 ── -->
+    <div class="api-card" id="api-16">
+      <div class="api-card-header">
+        <div class="api-num ver">16</div>
+        <div class="api-title">
+          <h2>Bank Account Verification</h2>
+          <p>Real-time penny-drop bank account verification with name fetch</p>
+        </div>
+        <div class="api-meta">
+          <span class="badge-pill method-post">POST</span>
+          <span class="badge-pill rate-pill">Per account</span>
+        </div>
+      </div>
+      <div class="api-card-body">
+        <div class="endpoint-block">
+          <span class="method-tag method-post">POST</span>
+          <span class="url">/api/v2/dmt/account_validate_route2</span>
+        </div>
+        <p class="use-text">Verify a bank account in real time using a penny-drop. Returns the registered account holder name. Always call this before initiating a Payout.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td>api_key</td><td>string</td><td class="req-yes">✅ Required</td><td>Your KwikAPI API key</td></tr>
+              <tr><td>number</td><td>string</td><td class="req-yes">✅ Required</td><td>Beneficiary bank account number</td></tr>
+              <tr><td>account</td><td>string</td><td class="req-yes">✅ Required</td><td>Same as <code>number</code> (required field alias)</td></tr>
+              <tr><td>ifsc</td><td>string</td><td class="req-opt">Optional</td><td>IFSC code for faster routing</td></tr>
+              <tr><td>order_id</td><td>string</td><td class="req-yes">✅ Required</td><td>Your unique order ID for this verification request</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="code-section">
+          <h4>Sample Response</h4>
+          <div class="code-block">
+
+
+
+
+
+
+{<br>
+&nbsp;&nbsp;<span class="c-key">"success"</span>:&nbsp;<span class="c-bool">true</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"status"</span>:&nbsp;<span class="c-str">"SUCCESS"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"message"</span>:&nbsp;<span class="c-str">"Transfer Success"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"order_id"</span>:&nbsp;<span class="c-str">"453408"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"utr"</span>:&nbsp;<span class="c-str">"90391***8811"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"ben_name"</span>:&nbsp;<span class="c-str">"Anshikha Sonam"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"charged_amount"</span>:&nbsp;<span class="c-str">"****"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"date_time"</span>:&nbsp;<span class="c-str">"2019-02-08 12:30:29"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"verify_status"</span>:&nbsp;<span class="c-str">"VERIFIED"</span><br>
+}
+          
+          
+          
+          
+          
+          
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════ UTILITY GROUP ═══════════════════════ -->
+    <div class="group-header">Utility APIs</div>
+
+    <!-- ── API 17 ── -->
+    <div class="api-card" id="api-17">
+      <div class="api-card-header">
+        <div class="api-num util">17</div>
+        <div class="api-title">
+          <h2>IP Detect</h2>
+          <p>Detect the public IP address of the calling server</p>
+        </div>
+        <div class="api-meta">
+          <span class="badge-pill method-get">GET</span>
+          <span class="badge-pill rate-pill">Unlimited</span>
+        </div>
+      </div>
+      <div class="api-card-body">
+        <div class="endpoint-block">
+          <span class="method-tag method-get">GET</span>
+          <span class="url">/api/v2/ip_detect.php</span>
+        </div>
+        <p class="use-text">Detect the public IP address of your server. Run this on your <strong>production server</strong> to get the IP to whitelist for all API access. No authentication required.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td colspan="4" style="text-align:center;color:var(--text-muted);font-style:italic;font-family:var(--font);">No parameters required</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="code-section">
+          <h4>Sample Response</h4>
+          <div class="code-block">
+{<br>
+&nbsp;&nbsp;<span class="c-key">"success"</span>: <span class="c-bool">true</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"message"</span>: <span class="c-str">"Your IP address detected"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"your_ip"</span>: <span class="c-str">"203.0.113.42"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"ipv4"</span>: <span class="c-str">"203.0.113.42"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"ipv6"</span>: <span class="c-null">null</span><br>
+}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════ REFERENCE TABLES ═══════════════════════ -->
+    <div class="group-header">Reference Tables</div>
+
+    <!-- Response format -->
+    <div class="api-card">
+      <div class="api-card-header">
+        <div class="api-title"><h2>Response Format</h2><p>All APIs return JSON</p></div>
+      </div>
+      <div class="api-card-body">
+        <p class="use-text">All APIs return a JSON body. A successful response always includes <code>"success": true</code>.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:4px;">
+          <div>
+            <div class="code-section"><h4>Success</h4>
+              <div class="code-block">
+{<br>
+&nbsp;&nbsp;<span class="c-key">"success"</span>: <span class="c-bool">true</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"status"</span>: <span class="c-str">"SUCCESS"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"message"</span>: <span class="c-str">"..."</span><br>
+}
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="code-section"><h4>Failure</h4>
+              <div class="code-block">
+{<br>
+&nbsp;&nbsp;<span class="c-key">"success"</span>: <span class="c-bool">false</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"status"</span>: <span class="c-str">"FAILED"</span>,<br>
+&nbsp;&nbsp;<span class="c-key">"message"</span>: <span class="c-str">"Error detail"</span><br>
+}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:20px;">
+          <div style="font-size:13.5px;font-weight:600;margin-bottom:10px;">Common Error Messages</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Message</th><th>Cause</th></tr></thead>
+              <tbody>
+                <tr><td>Invalid API Key</td><td>Wrong or inactive API key</td></tr>
+                <tr><td>Rate limit exceeded</td><td>Too many requests in the allowed window</td></tr>
+                <tr><td>Insufficient balance</td><td>Wallet balance too low for the transaction</td></tr>
+                <tr><td>Order ID already exists</td><td>Duplicate order_id — must be unique per transaction</td></tr>
+                <tr><td>IP not whitelisted</td><td>Server IP not added to whitelist (Payout API)</td></tr>
+                <tr><td>API MISMATCH</td><td>Wrong endpoint or parameter combination</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rate limits summary -->
+    <div class="api-card">
+      <div class="api-card-header">
+        <div class="api-title"><h2>Rate Limits Summary</h2><p>Default daily limits per API key</p></div>
+      </div>
+      <div class="api-card-body">
+        <div class="table-wrap">
+          <table class="summary-table">
+            <thead><tr><th>#</th><th>API</th><th>Default Limit</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>Service Category List</td><td>10 / day</td></tr>
+              <tr><td>2</td><td>Biller List</td><td>20 / day</td></tr>
+              <tr><td>3</td><td>Biller Details</td><td>20 / day</td></tr>
+              <tr><td>4</td><td>Circle Codes</td><td>2 / day</td></tr>
+              <tr><td>5</td><td>Wallet Balance</td><td>48 / day</td></tr>
+              <tr><td>6</td><td>Transaction Status</td><td>100 / day</td></tr>
+              <tr><td>7</td><td>Last 100 Transactions</td><td>48 / day</td></tr>
+              <tr><td>8–17</td><td>All other APIs</td><td>Per account (contact support)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note info"><span class="note-icon">💡</span><div>Wallet Balance and Transaction Status limits can be increased based on account performance and use case — subject to approval by KwikAPI support.</div></div>
+      </div>
+    </div>
+
+    <!-- Code samples -->
+    <div class="api-card">
+      <div class="api-card-header">
+        <div class="api-title"><h2>Code Samples</h2><p>102 ready-to-use samples across 6 languages</p></div>
+      </div>
+      <div class="api-card-body">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Language</th><th>Directory</th></tr></thead>
+            <tbody>
+              <tr><td>PHP 8+</td><td><code>code-samples/php/</code></td></tr>
+              <tr><td>JavaScript Fetch API</td><td><code>code-samples/javascript-fetch/</code></td></tr>
+              <tr><td>Shell cURL</td><td><code>code-samples/curl/</code></td></tr>
+              <tr><td>jQuery 3.x AJAX</td><td><code>code-samples/jquery/</code></td></tr>
+              <tr><td>Axios (Node.js)</td><td><code>code-samples/axios/</code></td></tr>
+              <tr><td>Python 3 requests</td><td><code>code-samples/python/</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div style="flex:1">
+        <h3>Need Help?</h3>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Contact KwikAPI support through any of these channels</p>
+        <div class="support-row">
+          <a href="https://wa.me/917070300613?text=Hi%2C+I+need+help+in+API+docs.+I+am+exploring+the+*GitHub+India+SDK*+%F0%9F%91%89+https%3A%2F%2Fgithub.com%2Fyoflic%2FKwikAPI-India" class="support-btn btn-wa" target="_blank">
+            💬 WhatsApp +91-7070300613
+          </a>
+          <a href="tel:18008890016" class="support-btn btn-phone">
+            📞 18008890016
+          </a>
+          <a href="mailto:support@kwikapi.com" class="support-btn btn-email">
+            ✉️ support@kwikapi.com
+          </a>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--text-muted);text-align:right;align-self:flex-end;">
+        KwikAPI v3.0.1<br>by Yoflic India Pvt Ltd
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+</body>
+</html>

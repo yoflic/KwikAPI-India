@@ -2,12 +2,11 @@
 """
 KwikAPI SDK — Utility Payments (BBPS)
 ─────────────────────────────────────────────────────────────────────────────
-Processes all BBPS (Bharat Bill Payment System) utility bill payments — including Electricity, Water, Gas, Broadband, Landline, DTH, Insurance, Loan EMI, and more. IMPORTANT: Set HTTP timeout to 0. Always pass opt8='Bills' as required by the API. Pass additional operator-specific fields (opt1–opt10) as indicated in the Biller Details response. After submission, always confirm final status via Transaction Status API.
+Processes all BBPS (Bharat Bill Payment System) utility bill payments — including Electricity, Water, Gas, Broadband, Landline, DTH, Insurance, Loan EMI, and more. Always pass opt8='Bills' as required by the API. Pass additional operator-specific fields (opt1–opt10) as indicated in the Biller Details response. After submission, always confirm final status via Transaction Status API.
 
 Endpoint  : GET /api/v2/bills/payments.php
 Group     : Payment APIs
 Rate Limit: Per account
-    # NOTE: Set HTTP timeout to 0 (no timeout).
     # NOTE: opt8 must always be 'Bills'.
     # NOTE: Always verify final status via Transaction Status API.
 
@@ -51,20 +50,19 @@ def utility_payments(api_key: str = 'YOUR_API_KEY', number: str = 'CONSUMER_NUMB
         dict: Parsed JSON response from KwikAPI.
 
     Raises:
-        KwikAPIError: If the API returns success=false.
+        KwikAPIError: If the API returns a non-SUCCESS status.
         requests.HTTPError: On non-2xx HTTP status.
-        requests.Timeout: If the request exceeds the timeout.
     """
     url = BASE_URL + "/api/v2/bills/payments.php"
 
     with requests.Session() as session:
         session.headers.update({"Accept": "application/json"})
-        response = session.get(url, params={'api_key': api_key, 'number': number, 'amount': amount, 'opid': opid, 'order_id': order_id, 'opt8': opt8, 'mobile': mobile}, timeout=None)
+        response = session.get(url, params={'api_key': api_key, 'number': number, 'amount': amount, 'opid': opid, 'order_id': order_id, 'opt8': opt8, 'mobile': mobile})
 
     response.raise_for_status()
     data = response.json()
 
-    if not data.get("success"):
+    if data.get("status") != "SUCCESS":
         raise KwikAPIError(data.get("message", "Unknown API error"))
 
     return data

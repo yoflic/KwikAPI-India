@@ -9,6 +9,13 @@
 # Rate Limit: Per account
 # NOTE: Recommended before every Payout to prevent failed transfers.
 #
+# Parameters:
+#   api_key            (required) Your KwikAPI API key
+#   number             (required) Beneficiary bank account number
+#   account            (required) Same as number (required field alias)
+#   ifsc               (optional) IFSC code for faster verification
+#   order_id           (required) Your unique order ID for this verification
+#
 # Environment:
 #   UAT (testing) : https://uat.kwikapi.com
 #   Production    : https://www.kwikapi.com  (change BASE_URL below)
@@ -32,7 +39,7 @@ kwik_bank_account_verify() {
   -F 'account=ACCOUNT_NUMBER' \
   -F 'ifsc=SBIN0001234' \
   -F 'order_id=YOUR_UNIQUE_ORDER_ID' \
-  '"${{BASE_URL}}{api["path"]}"'
+  "${BASE_URL}/api/v2/dmt/account_validate_route2"
   )
 
   echo "$response" | python3 -m json.tool 2>/dev/null || echo "$response"

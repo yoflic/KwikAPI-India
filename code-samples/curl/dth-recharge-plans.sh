@@ -8,6 +8,10 @@
 # Group     : Fetching APIs
 # Rate Limit: Per account
 #
+# Parameters:
+#   api_key            (required) Your KwikAPI API key
+#   opid               (required) DTH operator ID from Biller List API
+#
 # Environment:
 #   UAT (testing) : https://uat.kwikapi.com
 #   Production    : https://www.kwikapi.com  (change BASE_URL below)
@@ -27,7 +31,7 @@ kwik_dth_recharge_plans() {
     curl -s -X POST \
   -F 'api_key=YOUR_API_KEY' \
   -F 'opid=DTH_OPERATOR_ID' \
-  '"${{BASE_URL}}{api["path"]}"'
+  "${BASE_URL}/api/v2/DTH_plans.php"
   )
 
   echo "$response" | python3 -m json.tool 2>/dev/null || echo "$response"

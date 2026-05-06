@@ -35,7 +35,7 @@ define('KWIKAPI_KEY', 'YOUR_API_KEY');
  * @return array
  * @throws RuntimeException
  */
-function kwik_mobile_recharge_plans(string $api_key = 'YOUR_API_KEY', string $state_code = 'MH', string $opid = '1'): array
+function kwik_mobile_recharge_plans(string $api_key = 'YOUR_API_KEY', string $state_code = '4', string $opid = '1'): array
 {
     $ch = curl_init();
     curl_setopt_array($ch, [
@@ -48,7 +48,6 @@ function kwik_mobile_recharge_plans(string $api_key = 'YOUR_API_KEY', string $st
         'opid' => $opid,
         ]),
         CURLOPT_SSL_VERIFYPEER => true,
-        CURLOPT_TIMEOUT        => 30,
         CURLOPT_HTTPHEADER     => ['Accept: application/json'],
     ]);
 

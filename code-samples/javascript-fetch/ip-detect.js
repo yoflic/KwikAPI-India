@@ -24,7 +24,6 @@ const BASE_URL = 'https://uat.kwikapi.com'; // Switch to https://www.kwikapi.com
 
 /**
  * IP Detect
- * @param  {void}
  * @returns {Promise<object>}
  */
 async function ipDetect() {

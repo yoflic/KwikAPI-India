@@ -40,7 +40,6 @@ function kwik_last_transactions(string $apiKey = KWIKAPI_KEY): array
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_HTTPGET        => true,
         CURLOPT_SSL_VERIFYPEER => true,
-        CURLOPT_TIMEOUT        => 30,
         CURLOPT_HTTPHEADER     => ['Accept: application/json'],
     ]);
 
@@ -65,7 +64,7 @@ function kwik_last_transactions(string $apiKey = KWIKAPI_KEY): array
 try {
     $result = kwik_last_transactions(KWIKAPI_KEY);
 
-    if ($result['success'] ?? false) {
+    if (is_array($result)) {
         echo "Success: " . ($result['message'] ?? 'OK') . PHP_EOL;
         echo json_encode($result, JSON_PRETTY_PRINT) . PHP_EOL;
     } else {

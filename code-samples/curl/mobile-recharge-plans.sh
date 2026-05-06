@@ -8,6 +8,11 @@
 # Group     : Fetching APIs
 # Rate Limit: Per account
 #
+# Parameters:
+#   api_key            (required) Your KwikAPI API key
+#   state_code         (required) Telecom circle code from Circle Codes API
+#   opid               (required) Operator ID from Biller List API
+#
 # Environment:
 #   UAT (testing) : https://uat.kwikapi.com
 #   Production    : https://www.kwikapi.com  (change BASE_URL below)
@@ -26,9 +31,9 @@ kwik_mobile_recharge_plans() {
   response=$(
     curl -s -X POST \
   -F 'api_key=YOUR_API_KEY' \
-  -F 'state_code=MH' \
+  -F 'state_code=4' \
   -F 'opid=1' \
-  '"${{BASE_URL}}{api["path"]}"'
+  "${BASE_URL}/api/v2/recharge_plans.php"
   )
 
   echo "$response" | python3 -m json.tool 2>/dev/null || echo "$response"

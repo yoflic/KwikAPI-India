@@ -24,10 +24,12 @@ const BASE_URL = 'https://uat.kwikapi.com'; // Switch to https://www.kwikapi.com
 
 /**
  * Mobile Recharge Plans
- * @param  {api_key = 'YOUR_API_KEY', state_code = 'MH', opid = '1'}
+ * @param {string} api_key - (required) Your KwikAPI API key
+ * @param {string} state_code - (required) Telecom circle code from Circle Codes API
+ * @param {int} opid - (required) Operator ID from Biller List API
  * @returns {Promise<object>}
  */
-async function mobileRechargePlans(api_key = 'YOUR_API_KEY', state_code = 'MH', opid = '1') {
+async function mobileRechargePlans(api_key = 'YOUR_API_KEY', state_code = '4', opid = '1') {
   try {
   const formData = new FormData();
     formData.append('api_key', api_key);

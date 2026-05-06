@@ -2,12 +2,11 @@
 """
 KwikAPI SDK — Prepaid / DTH Recharge
 ─────────────────────────────────────────────────────────────────────────────
-Initiates a prepaid mobile, DTH/D2H, or Datacard recharge in real time. IMPORTANT: Set your HTTP client timeout to 0 (no timeout) — the API processes synchronously and may take longer than default timeouts. Always verify the final outcome by calling the Transaction Status API with your order_id immediately after, regardless of the response received.
+Initiates a prepaid mobile, DTH/D2H, or Datacard recharge in real time. Always verify the final outcome by calling the Transaction Status API with your order_id immediately after, regardless of the response received.
 
 Endpoint  : GET /api/v2/recharge.php
 Group     : Payment APIs
 Rate Limit: Per account
-    # NOTE: Set HTTP timeout to 0 (no timeout) — API processes in real time.
     # NOTE: Always verify final status via Transaction Status API.
     # NOTE: order_id must be globally unique per transaction.
 
@@ -32,7 +31,7 @@ class KwikAPIError(Exception):
     """Raised when the KwikAPI returns a non-success response."""
 
 
-def prepaid_dth_recharge(api_key: str = 'YOUR_API_KEY', number: str = '9999999999', amount: str = '199', opid: str = 'OPERATOR_ID', state_code: str = 'MH', order_id: str = 'YOUR_UNIQUE_ORDER_ID') -> dict[str, Any]:
+def prepaid_dth_recharge(api_key: str = 'YOUR_API_KEY', number: str = '9999999999', amount: str = '199', opid: str = 'OPERATOR_ID', state_code: str = '4', order_id: str = 'YOUR_UNIQUE_ORDER_ID') -> dict[str, Any]:
     """
     Prepaid / DTH Recharge
 
@@ -48,20 +47,19 @@ def prepaid_dth_recharge(api_key: str = 'YOUR_API_KEY', number: str = '999999999
         dict: Parsed JSON response from KwikAPI.
 
     Raises:
-        KwikAPIError: If the API returns success=false.
+        KwikAPIError: If the API returns a non-SUCCESS status.
         requests.HTTPError: On non-2xx HTTP status.
-        requests.Timeout: If the request exceeds the timeout.
     """
     url = BASE_URL + "/api/v2/recharge.php"
 
     with requests.Session() as session:
         session.headers.update({"Accept": "application/json"})
-        response = session.get(url, params={'api_key': api_key, 'number': number, 'amount': amount, 'opid': opid, 'state_code': state_code, 'order_id': order_id}, timeout=None)
+        response = session.get(url, params={'api_key': api_key, 'number': number, 'amount': amount, 'opid': opid, 'state_code': state_code, 'order_id': order_id})
 
     response.raise_for_status()
     data = response.json()
 
-    if not data.get("success"):
+    if data.get("status") != "SUCCESS":
         raise KwikAPIError(data.get("message", "Unknown API error"))
 
     return data
@@ -70,7 +68,7 @@ def prepaid_dth_recharge(api_key: str = 'YOUR_API_KEY', number: str = '999999999
 # ── Example usage ─────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     try:
-        result = prepaid_dth_recharge('YOUR_API_KEY', '9999999999', '199', 'OPERATOR_ID', 'MH', 'YOUR_UNIQUE_ORDER_ID')
+        result = prepaid_dth_recharge('YOUR_API_KEY', '9999999999', '199', 'OPERATOR_ID', '4', 'YOUR_UNIQUE_ORDER_ID')
         import json
         print(json.dumps(result, indent=2))
     except KwikAPIError as e:

@@ -9,6 +9,10 @@
 # Rate Limit: 100 / day
 # NOTE: Always verify status — never rely solely on payment API response.
 #
+# Parameters:
+#   api_key            (required) Your KwikAPI API key
+#   order_id           (required) Your unique order ID used during the payment request
+#
 # Environment:
 #   UAT (testing) : https://uat.kwikapi.com
 #   Production    : https://www.kwikapi.com  (change BASE_URL below)
@@ -29,7 +33,7 @@ kwik_transaction_status() {
     curl -s -G \
   --data-urlencode 'api_key=YOUR_API_KEY' \
   --data-urlencode 'order_id=YOUR_ORDER_ID' \
-  '"${{BASE_URL}}{api["path"]}"'
+  "${BASE_URL}/api/v2/status.php"
   )
 
   echo "$response" | python3 -m json.tool 2>/dev/null || echo "$response"

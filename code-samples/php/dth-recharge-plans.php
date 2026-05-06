@@ -45,7 +45,6 @@ function kwik_dth_recharge_plans(string $api_key = 'YOUR_API_KEY', string $opid 
         'opid' => $opid,
         ]),
         CURLOPT_SSL_VERIFYPEER => true,
-        CURLOPT_TIMEOUT        => 30,
         CURLOPT_HTTPHEADER     => ['Accept: application/json'],
     ]);
 

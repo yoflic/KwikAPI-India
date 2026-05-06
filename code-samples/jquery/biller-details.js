@@ -20,6 +20,8 @@ const BASE_URL = 'https://uat.kwikapi.com'; // Switch to https://www.kwikapi.com
 
 /**
  * Biller Details
+ * @param {string} api_key - (required) Your KwikAPI API key
+ * @param {string} opid - (required) Operator ID(s) — use '#' to separate multiple (e.g. '53#54#55')
  * @returns {jQuery.Deferred} Resolves with parsed JSON response
  */
 function billerDetails(api_key = 'YOUR_API_KEY', opid = '53') {
@@ -30,7 +32,6 @@ function billerDetails(api_key = 'YOUR_API_KEY', opid = '53') {
     method:   'POST',
     data:     data,
     dataType: 'json',
-    timeout:  30000,
   })
   .done(function (response) {
     if (!response.success) {

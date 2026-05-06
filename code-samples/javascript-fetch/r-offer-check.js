@@ -25,7 +25,9 @@ const BASE_URL = 'https://uat.kwikapi.com'; // Switch to https://www.kwikapi.com
 
 /**
  * R-Offer Check
- * @param  {api_key = 'YOUR_API_KEY', opid = 'OPERATOR_ID', mobile = '9999999999'}
+ * @param {string} api_key - (required) Your KwikAPI API key
+ * @param {int} opid - (required) Operator ID — Airtel or VI only
+ * @param {string} mobile - (required) 10-digit prepaid mobile number to check offers for
  * @returns {Promise<object>}
  */
 async function rOfferCheck(api_key = 'YOUR_API_KEY', opid = 'OPERATOR_ID', mobile = '9999999999') {

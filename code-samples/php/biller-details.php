@@ -46,7 +46,6 @@ function kwik_biller_details(string $api_key = 'YOUR_API_KEY', string $opid = '5
         'opid' => $opid,
         ]),
         CURLOPT_SSL_VERIFYPEER => true,
-        CURLOPT_TIMEOUT        => 30,
         CURLOPT_HTTPHEADER     => ['Accept: application/json'],
     ]);
 

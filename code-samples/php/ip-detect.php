@@ -41,7 +41,6 @@ function kwik_ip_detect(): array
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_HTTPGET        => true,
         CURLOPT_SSL_VERIFYPEER => true,
-        CURLOPT_TIMEOUT        => 10,
         CURLOPT_HTTPHEADER     => ['Accept: application/json'],
     ]);
 
