@@ -1,0 +1,129 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# KwikAPI India — .gitignore
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Secrets / Config ──────────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+config.local.*
+secrets.*
+*.key
+*.pem
+*.p12
+
+# ── OS & Editor ───────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# ── Node.js ───────────────────────────────────────────────────────────────────
+node_modules/
+jspm_packages/
+web_modules/
+package-lock.json
+yarn.lock
+.npm
+.pnpm-store
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+*.tsbuildinfo
+.eslintcache
+.stylelintcache
+.node_repl_history
+*.tgz
+.yarn-integrity
+bower_components/
+.lock-wscript
+build/Release
+
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+.venv/
+env/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+
+# ── PHP ───────────────────────────────────────────────────────────────────────
+vendor/
+composer.lock
+
+# ── Postman Exports ───────────────────────────────────────────────────────────
+*.postman_collection.json
+*.postman_environment.json
+*.postman_globals.json
+postman_collection*.json
+
+# ── Shell Scripts ─────────────────────────────────────────────────────────────
+*.sh
+
+# ── Logs ─────────────────────────────────────────────────────────────────────
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# ── Runtime data ──────────────────────────────────────────────────────────────
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# ── Diagnostic reports ────────────────────────────────────────────────────────
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# ── Temp ──────────────────────────────────────────────────────────────────────
+*.tmp
+*.temp
+/tmp/
+.cache
+.parcel-cache
+.grunt
+.fusebox/
+.tern-port
+.temp
+.svelte-kit/
+
+# ── Test & Coverage ───────────────────────────────────────────────────────────
+coverage
+*.lcov
+.nyc_output
+lib-cov
+test-results/
+.vscode-test
+
+# ── Build outputs ─────────────────────────────────────────────────────────────
+dist
+.output
+out
+.next
+.nuxt
+.vuepress/dist
+**/.vitepress/dist
+**/.vitepress/cache
+.docusaurus
+.serverless/
+.dynamodb/
+.firebase/
+.vite/
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
