@@ -4,7 +4,7 @@
 > Instantly integrate India's bill payments, prepaid/DTH recharges, BBPS utility payments, payouts, and penny-drop verification and more.
 
 📖 **[API Reference — All 17 APIs with parameters, response shapes & examples](./API-REFERENCE.md)**  
-🌐 **[API Reference HTML](./API-REFERENCE.html)**
+🌐 **[API Reference HTML](./docs/API-REFERENCE.html)** &nbsp;·&nbsp; [Recharge Flow](./docs/RECHARGE-FLOW.html) &nbsp;·&nbsp; [BBPS Payment Flow](./docs/BBPS-PAYMENT-FLOW.html)
 
 ---
 
