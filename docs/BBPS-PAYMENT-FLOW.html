@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BBPS Bill Payment Flow Guide — KwikAPI India SDK | Utility Bill Integration</title>
   <meta name="description"
-    content="Step-by-step integration guide for BBPS utility bill payments using KwikAPI India SDK v3.0.1. Covers electricity, water, gas, broadband, insurance, loan EMI and 1000+ billers.">
+    content="Step-by-step integration guide for BBPS utility bill payments using KwikAPI India SDK v3.0.1. Covers 27 service categories: Electricity, Gas, Water, Postpaid, Landline, Broadband, Insurance, FASTag, Credit Card, Loan, Education Fees, Municipal Taxes, Donations, EV Recharge and more. 22000+ billers.">
   <meta name="keywords"
     content="BBPS API provider, Bharat Bill Payment System API, BBPS integration, electricity bill payment API, gas bill payment API, water bill payment API, landline bill payment API, broadband bill payment API, insurance premium payment API, FASTag recharge API, postpaid bill payment API, DTH recharge API, credit card bill payment API, loan repayment API, cable TV bill payment API, education fees payment API, municipal taxes API, NCMC recharge API, eChallan payment API, EV recharge API, NPS payment API, housing society payment API, subscription payment API, fleet card recharge API, BBPS retailer API, BBPS corporate solution">
   <meta name="author" content="YOFLIC India Pvt Ltd">
@@ -16,7 +16,7 @@
   <meta property="og:type" content="article">
   <meta property="og:title" content="BBPS Bill Payment Flow Guide — KwikAPI India SDK">
   <meta property="og:description"
-    content="Step-by-step guide for integrating BBPS utility bill payments using KwikAPI India SDK v3.0.1. Covers 1000+ billers across electricity, water, gas, broadband and more.">
+    content="Step-by-step guide for integrating BBPS utility bill payments using KwikAPI India SDK v3.0.1. Covers 27 service categories and 22000+ billers — electricity, gas, water, postpaid, FASTag, credit card, loan, insurance, municipal taxes, EV recharge and more.">
   <meta property="og:url" content="https://yoflic.github.io/KwikAPI-India/docs/BBPS-PAYMENT-FLOW.html">
   <meta property="og:site_name" content="KwikAPI India SDK">
   <!-- Twitter Card -->
@@ -29,7 +29,7 @@
   "@context": "https://schema.org",
   "@type": "HowTo",
   "name": "Integrate BBPS Utility Bill Payments using KwikAPI",
-  "description": "Step-by-step guide for integrating BBPS utility bill payments using KwikAPI India SDK v3.0.1 — covering electricity, water, gas, broadband, insurance, loan EMI across 1000+ billers.",
+  "description": "Step-by-step guide for integrating BBPS utility bill payments using KwikAPI India SDK v3.0.1 — covering 27 service categories including electricity, water, gas, postpaid, FASTag, credit card bill, loan repayment, insurance, municipal taxes, EV recharge and more across 22000+ billers.",
   "url": "https://yoflic.github.io/KwikAPI-India/docs/BBPS-PAYMENT-FLOW.html",
   "step": [
     { "@type": "HowToStep", "position": 1, "name": "Setup — Fetch Service Categories & Billers" },
@@ -760,6 +760,18 @@
       position: relative;
       z-index: 1;
     }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 10px; margin: 20px 0 8px;
+  }
+  .service-card {
+    background: var(--brand-light); border: 1px solid #d8b4fe;
+    border-radius: 10px; padding: 10px 12px;
+    display: flex; flex-direction: column; gap: 3px;
+  }
+  .service-card .sc-name { font-weight: 700; font-size: 13px; color: var(--brand-dark); }
+  .service-card .sc-desc { font-size: 11.5px; color: var(--text-muted); }
   </style>
 </head>
 
@@ -775,12 +787,19 @@
     <p>Step-by-step guide for integrating BBPS utility bill payments using KwikAPI India SDK.</p>
     <div class="header-tags">
       <span>Electricity</span>
-      <span>Water</span>
       <span>Gas</span>
+      <span>Water</span>
+      <span>Postpaid</span>
       <span>Broadband</span>
+      <span>Landline</span>
+      <span>FASTag</span>
       <span>Insurance</span>
+      <span>Credit Card</span>
       <span>Loan EMI</span>
-      <span>1000+ Billers</span>
+      <span>Municipal Taxes</span>
+      <span>EV Recharge</span>
+      <span>27 Categories</span>
+      <span>22000+ Billers</span>
       <span>5 Steps</span>
     </div>
   </header>
@@ -818,6 +837,36 @@
           }
         </div>
         <div class="note">💡 Store the category names. Use them to populate your biller-selection UI by service type.
+        </div>
+        <p style="font-weight:600;font-size:13.5px;margin:20px 0 4px;">Supported BBPS Service Categories (27)</p>
+        <div class="services-grid">
+          <div class="service-card"><span class="sc-name">Postpaid</span><span class="sc-desc">Postpaid Bill Payment</span></div>
+          <div class="service-card"><span class="sc-name">Electricity</span><span class="sc-desc">Electricity Bill Payment</span></div>
+          <div class="service-card"><span class="sc-name">Gas</span><span class="sc-desc">Gas Bill Payment</span></div>
+          <div class="service-card"><span class="sc-name">Water</span><span class="sc-desc">Water Bill Payment</span></div>
+          <div class="service-card"><span class="sc-name">Landline</span><span class="sc-desc">Landline Bill Payment</span></div>
+          <div class="service-card"><span class="sc-name">Broadband</span><span class="sc-desc">Broadband Bill Payment</span></div>
+          <div class="service-card"><span class="sc-name">Insurance</span><span class="sc-desc">Insurance Premium Payment</span></div>
+          <div class="service-card"><span class="sc-name">FASTag</span><span class="sc-desc">FASTag Recharge</span></div>
+          <div class="service-card"><span class="sc-name">Gas Cylinder</span><span class="sc-desc">Gas Cylinder Booking</span></div>
+          <div class="service-card"><span class="sc-name">Cable TV</span><span class="sc-desc">Cable TV Bill Payment</span></div>
+          <div class="service-card"><span class="sc-name">Credit Card</span><span class="sc-desc">Credit Card Bill Payment</span></div>
+          <div class="service-card"><span class="sc-name">Loan</span><span class="sc-desc">Loan Repayment</span></div>
+          <div class="service-card"><span class="sc-name">Education Fees</span><span class="sc-desc">Education Fees Payment</span></div>
+          <div class="service-card"><span class="sc-name">Housing Society</span><span class="sc-desc">Housing Society Payment</span></div>
+          <div class="service-card"><span class="sc-name">Municipal Taxes</span><span class="sc-desc">Municipal Taxes Payment</span></div>
+          <div class="service-card"><span class="sc-name">Clubs &amp; Associations</span><span class="sc-desc">Clubs &amp; Associations Payment</span></div>
+          <div class="service-card"><span class="sc-name">Subscription</span><span class="sc-desc">Subscription</span></div>
+          <div class="service-card"><span class="sc-name">Donation</span><span class="sc-desc">Donation Payment</span></div>
+          <div class="service-card"><span class="sc-name">NCMC Recharge</span><span class="sc-desc">NCMC Recharge</span></div>
+          <div class="service-card"><span class="sc-name">eChallan</span><span class="sc-desc">eChallan Payment</span></div>
+          <div class="service-card"><span class="sc-name">Prepaid Meter</span><span class="sc-desc">Prepaid Meter Recharge</span></div>
+          <div class="service-card"><span class="sc-name">Agent Collection</span><span class="sc-desc">Agent Collection Payment</span></div>
+          <div class="service-card"><span class="sc-name">Rental</span><span class="sc-desc">Rental Payment</span></div>
+          <div class="service-card"><span class="sc-name">Municipal Services</span><span class="sc-desc">Municipal Services Payment</span></div>
+          <div class="service-card"><span class="sc-name">EV Recharge</span><span class="sc-desc">EV Recharge</span></div>
+          <div class="service-card"><span class="sc-name">Fleet Card</span><span class="sc-desc">Fleet Card Recharge</span></div>
+          <div class="service-card"><span class="sc-name">NPS</span><span class="sc-desc">National Pension System</span></div>
         </div>
       </div>
     </div>
