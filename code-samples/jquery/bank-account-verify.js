@@ -21,14 +21,13 @@ const BASE_URL = 'https://uat.kwikapi.com'; // Switch to https://www.kwikapi.com
 /**
  * Bank/UPI Account Verification v2
  * @param {string} api_key - (required) Your KwikAPI API key
- * @param {string} number - (required) Bank account number or UPI/VPA address
  * @param {string} account - (required) Bank account number or UPI/VPA address — auto-detected
  * @param {string} ifsc - (optional) IFSC code for bank account routing; not required for UPI/VPA
  * @param {string} order_id - (required) Your unique order ID for this verification
  * @returns {jQuery.Deferred} Resolves with parsed JSON response
  */
-function bankAccountVerify(api_key = 'YOUR_API_KEY', number = 'ACCOUNT_NUMBER', account = 'ACCOUNT_NUMBER', ifsc = 'SBIN0001234', order_id = 'YOUR_UNIQUE_ORDER_ID') {
-  const data = { api_key: api_key, number: number, account: account, ifsc: ifsc, order_id: order_id };
+function bankAccountVerify(api_key = 'YOUR_API_KEY', account = 'ACCOUNT_NUMBER', ifsc = 'SBIN0001234', order_id = 'YOUR_UNIQUE_ORDER_ID') {
+  const data = { api_key: api_key, account: account, ifsc: ifsc, order_id: order_id };
 
   return $.ajax({
     url:      BASE_URL + '/api/v2/dmt/account_validate_route2',
@@ -50,7 +49,7 @@ function bankAccountVerify(api_key = 'YOUR_API_KEY', number = 'ACCOUNT_NUMBER', 
 
 // ── Example usage ─────────────────────────────────────────────────────────────
 $(function () {
-  bankAccountVerify('YOUR_API_KEY', 'ACCOUNT_NUMBER', 'ACCOUNT_NUMBER', 'SBIN0001234', 'YOUR_UNIQUE_ORDER_ID')
+  bankAccountVerify('YOUR_API_KEY', 'ACCOUNT_NUMBER', 'SBIN0001234', 'YOUR_UNIQUE_ORDER_ID')
     .done(function (result) {
       console.log('Success:', result);
     })

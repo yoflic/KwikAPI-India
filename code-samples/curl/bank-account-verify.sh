@@ -11,7 +11,6 @@
 #
 # Parameters:
 #   api_key            (required) Your KwikAPI API key
-#   number             (required) Bank account number or UPI/VPA address
 #   account            (required) Bank account number or UPI/VPA address — auto-detected
 #   ifsc               (optional) IFSC code for bank account routing; not required for UPI/VPA
 #   order_id           (required) Your unique order ID for this verification
@@ -35,7 +34,6 @@ kwik_bank_account_verify() {
   response=$(
     curl -s -X POST \
   -F 'api_key=YOUR_API_KEY' \
-  -F 'number=ACCOUNT_NUMBER' \
   -F 'account=ACCOUNT_NUMBER' \
   -F 'ifsc=SBIN0001234' \
   -F 'order_id=YOUR_UNIQUE_ORDER_ID' \

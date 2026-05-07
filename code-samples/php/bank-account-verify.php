@@ -11,7 +11,6 @@
  *
  * Parameters:
  *   @param  string   $api_key          (required)  Your KwikAPI API key
- *   @param  string   $number           (required)  Bank account number or UPI/VPA address
  *   @param  string   $account          (required)  Bank account number or UPI/VPA address — auto-detected
  *   @param  string   $ifsc             (optional)  IFSC code for bank account routing; not required for UPI/VPA
  *   @param  string   $order_id         (required)  Your unique order ID for this verification
@@ -33,14 +32,13 @@ define('KWIKAPI_KEY', 'YOUR_API_KEY');
  * Bank/UPI Account Verification v2
  *
  *   @param  string   $api_key          (required)  Your KwikAPI API key
- *   @param  string   $number           (required)  Bank account number or UPI/VPA address
  *   @param  string   $account          (required)  Bank account number or UPI/VPA address — auto-detected
  *   @param  string   $ifsc             (optional)  IFSC code for bank account routing; not required for UPI/VPA
  *   @param  string   $order_id         (required)  Your unique order ID for this verification
  * @return array
  * @throws RuntimeException
  */
-function kwik_bank_account_verify(string $api_key = 'YOUR_API_KEY', string $number = 'ACCOUNT_NUMBER', string $account = 'ACCOUNT_NUMBER', string $ifsc = 'SBIN0001234', string $order_id = 'YOUR_UNIQUE_ORDER_ID'): array
+function kwik_bank_account_verify(string $api_key = 'YOUR_API_KEY', string $account = 'ACCOUNT_NUMBER', string $ifsc = 'SBIN0001234', string $order_id = 'YOUR_UNIQUE_ORDER_ID'): array
 {
     $ch = curl_init();
     curl_setopt_array($ch, [
@@ -49,7 +47,6 @@ function kwik_bank_account_verify(string $api_key = 'YOUR_API_KEY', string $numb
         CURLOPT_POST           => true,
         CURLOPT_POSTFIELDS     => http_build_query([
         'api_key' => $api_key,
-        'number' => $number,
         'account' => $account,
         'ifsc' => $ifsc,
         'order_id' => $order_id,
@@ -77,7 +74,7 @@ function kwik_bank_account_verify(string $api_key = 'YOUR_API_KEY', string $numb
 
 // ── Example usage ─────────────────────────────────────────────────────────────
 try {
-    $result = kwik_bank_account_verify('YOUR_API_KEY', 'ACCOUNT_NUMBER', 'ACCOUNT_NUMBER', 'SBIN0001234', 'YOUR_UNIQUE_ORDER_ID');
+    $result = kwik_bank_account_verify('YOUR_API_KEY', 'ACCOUNT_NUMBER', 'SBIN0001234', 'YOUR_UNIQUE_ORDER_ID');
 
     if ($result['success'] ?? false) {
         echo "Success: " . ($result['message'] ?? 'OK') . PHP_EOL;

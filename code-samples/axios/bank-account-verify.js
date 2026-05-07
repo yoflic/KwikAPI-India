@@ -25,18 +25,16 @@ const BASE_URL = 'https://uat.kwikapi.com'; // Switch to https://www.kwikapi.com
 /**
  * Bank/UPI Account Verification v2
  * @param {string} api_key - (required) Your KwikAPI API key
- * @param {string} number - (required) Bank account number or UPI/VPA address
  * @param {string} account - (required) Bank account number or UPI/VPA address — auto-detected
  * @param {string} ifsc - (optional) IFSC code for bank account routing; not required for UPI/VPA
  * @param {string} order_id - (required) Your unique order ID for this verification
  * @returns {Promise<object>} Parsed JSON response
  * @throws {Error} on HTTP or API-level error
  */
-async function bankAccountVerify(api_key = 'YOUR_API_KEY', number = 'ACCOUNT_NUMBER', account = 'ACCOUNT_NUMBER', ifsc = 'SBIN0001234', order_id = 'YOUR_UNIQUE_ORDER_ID') {
+async function bankAccountVerify(api_key = 'YOUR_API_KEY', account = 'ACCOUNT_NUMBER', ifsc = 'SBIN0001234', order_id = 'YOUR_UNIQUE_ORDER_ID') {
   try {
   const params = new URLSearchParams({
     api_key: api_key,
-  number: number,
   account: account,
   ifsc: ifsc,
   order_id: order_id,
@@ -62,7 +60,7 @@ async function bankAccountVerify(api_key = 'YOUR_API_KEY', number = 'ACCOUNT_NUM
 // ── Example usage ─────────────────────────────────────────────────────────────
 (async () => {
   try {
-    const result = await bankAccountVerify('YOUR_API_KEY', 'ACCOUNT_NUMBER', 'ACCOUNT_NUMBER', 'SBIN0001234', 'YOUR_UNIQUE_ORDER_ID');
+    const result = await bankAccountVerify('YOUR_API_KEY', 'ACCOUNT_NUMBER', 'SBIN0001234', 'YOUR_UNIQUE_ORDER_ID');
     console.log('Success:', JSON.stringify(result, null, 2));
   } catch (error) {
     console.error('Failed:', error.message);

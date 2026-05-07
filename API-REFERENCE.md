@@ -618,7 +618,6 @@
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `api_key` | string | ✅ Required | Your KwikAPI API key |
-| `number` | string | ✅ Required | Bank account number or UPI/VPA address |
 | `account` | string | ✅ Required | Bank account number or UPI/VPA address — auto-detected |
 | `ifsc` | string | Optional | IFSC code for bank account routing. Not required for UPI/VPA |
 | `order_id` | string | ✅ Required | Your unique order ID for this verification |
