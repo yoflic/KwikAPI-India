@@ -159,7 +159,7 @@ Every sample follows these conventions for drop-in SDK use:
 
 ### Prepaid / DTH Recharge
 ```
-1. operator-circle-detect   →  get opid + state_code for mobile number
+1. operator-circle-detect   →  get opid for mobile number
 2. mobile-recharge-plans    →  show plans to user
 3. wallet-balance           →  verify sufficient balance
 4. prepaid-dth-recharge     →  initiate recharge

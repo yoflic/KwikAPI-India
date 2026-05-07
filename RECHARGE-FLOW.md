@@ -171,7 +171,6 @@ Input → {
   number      ← customer mobile / DTH subscriber ID
   amount      ← from plan or manual entry
   opid        ← from Operator Detect (Step 5)
-  state_code  ← from Operator Detect (Step 5)
   order_id    ← your unique order ID (never reuse)
 }
 ```
@@ -227,7 +226,7 @@ LIVE TRANSACTION (per customer recharge)
 Customer enters mobile number
          │
          ▼
-[5] Operator & Circle Detect  ──── get opid + state_code (MNP-safe)
+[5] Operator & Circle Detect  ──── get opid (MNP-safe)
          │
          ├──── [6a] Show Plans?  ──► Recharge Plan Fetch
          │                                   │
