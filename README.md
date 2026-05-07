@@ -171,7 +171,7 @@ Every sample follows these conventions for drop-in SDK use:
 1. biller-details           →  confirm bill-fetch support + required params
 2. bill-fetch               →  fetch outstanding due amount
 3. wallet-balance           →  verify sufficient balance
-4. utility-payments         →  process payment (opt8 = "Bills")
+4. utility-payments         →  process payment
 5. transaction-status       →  ALWAYS verify final status
 ```
 

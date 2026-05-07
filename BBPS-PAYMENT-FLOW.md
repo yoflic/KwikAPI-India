@@ -117,11 +117,10 @@ Use this to show the customer their exact due amount before payment — improves
 Input → {
   api_key,
   number    ← consumer / account / registered number
-  amount    ← pass 0 if unknown
   opid      ← operator ID from Biller List (Step 2)
   order_id  ← your unique reference ID for this fetch
   opt1–opt10 ← additional fields as required by the biller (Step 3)
-  mobile    ← customer mobile for confirmation (optional)
+  mobile    ← customer mobile for confirmation (required)
 
 }
 ```
@@ -161,15 +160,12 @@ Input → {
   amount      ← bill amount (from fetch or manual entry)
   opid        ← operator ID from Biller List (Step 2)
   order_id    ← your unique order ID (never reuse)
-  opt1–opt9   ← additional biller-specific fields (from Step 3)
-
-  opt8        ← MUST always be "Bills" (required by API)
-  refrence_id ← optional reconciliation reference
-  mobile      ← customer mobile for confirmation SMS (optional)
+  opt1–opt10  ← additional biller-specific fields (from Step 3)
+  refrence_id ← ref_id from Bill Fetch response; pass 0 if bill fetch not supported
+  mobile      ← customer mobile for confirmation SMS (required)
 }
 ```
 
-> `opt8` must always be set to `"Bills"` — this is a fixed required value, not optional.  
 > Generate a unique `order_id` for every transaction. Never reuse one.
 
 **Response:**
@@ -230,7 +226,7 @@ Customer selects biller + enters consumer number
          │   Customer enters amount manually
          │
          ▼
-[5] Utility Payment (BBPS)  ◄── opt8 = "Bills"
+[5] Utility Payment (BBPS)
          │
          ├── SUCCESS / FAILURE  ──► update records + notify customer
          │
@@ -258,7 +254,7 @@ Common mappings (examples — always verify from Biller Details):
 | `opt5` | District / Sub-division / Zone |
 | `opt6` | Bill date / Due date |
 | `opt7` | Bill number / Reference number |
-| `opt8` | **Always `"Bills"`** (fixed, required) |
+| `opt8` | Biller-specific field (see `required_params` in Biller Details) |
 | `opt9` | Service type / Category |
 | `opt10` | Additional biller-specific field |
 
