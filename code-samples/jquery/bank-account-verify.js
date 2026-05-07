@@ -1,7 +1,7 @@
 /**
- * KwikAPI SDK — Bank Account Verification
+ * KwikAPI SDK — Bank/UPI Account Verification v2
  * ─────────────────────────────────────────────────────────────────────────────
- * Validates a bank account by performing a real-time penny-drop verification. Returns the registered account holder name, account status (active/inactive), and bank details. Always call this before initiating a Payout to avoid failed transfers due to incorrect account details. Supports optional IFSC for faster routing.
+ * Validates a bank account via real-time penny-drop or verifies a UPI/VPA address. Returns the registered account holder name and account status. The account field auto-detects whether the input is a bank account number or UPI/VPA. Always call this before initiating a Payout.
  *
  * Endpoint  : POST /api/v2/dmt/account_validate_route2
  * Group     : Verification APIs
@@ -19,11 +19,11 @@
 const BASE_URL = 'https://uat.kwikapi.com'; // Switch to https://www.kwikapi.com for production
 
 /**
- * Bank Account Verification
+ * Bank/UPI Account Verification v2
  * @param {string} api_key - (required) Your KwikAPI API key
- * @param {string} number - (required) Beneficiary bank account number
- * @param {string} account - (required) Same as number (required field alias)
- * @param {string} ifsc - (optional) IFSC code for faster verification
+ * @param {string} number - (required) Bank account number or UPI/VPA address
+ * @param {string} account - (required) Bank account number or UPI/VPA address — auto-detected
+ * @param {string} ifsc - (optional) IFSC code for bank account routing; not required for UPI/VPA
  * @param {string} order_id - (required) Your unique order ID for this verification
  * @returns {jQuery.Deferred} Resolves with parsed JSON response
  */
@@ -43,7 +43,7 @@ function bankAccountVerify(api_key = 'YOUR_API_KEY', number = 'ACCOUNT_NUMBER', 
     return response;
   })
   .fail(function (xhr, status, error) {
-    console.error('[KwikAPI] Bank Account Verification failed:', status, error);
+    console.error('[KwikAPI] Bank/UPI Account Verification v2 failed:', status, error);
     throw new Error(error);
   });
 }

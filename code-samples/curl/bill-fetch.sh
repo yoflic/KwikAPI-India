@@ -12,11 +12,10 @@
 # Parameters:
 #   api_key            (required) Your KwikAPI API key
 #   number             (required) Consumer number / account number / registered mobile
-#   amount             (optional) Pre-filled amount (pass 0 if unknown)
 #   opid               (required) Operator ID from Biller List API
 #   order_id           (required) Your unique order/reference ID
 #   opt1-opt10         (optional) Additional operator-specific fields (see Biller Details)
-#   mobile             (optional) Customer mobile number for SMS confirmation
+#   mobile             (required) Customer mobile number for SMS confirmation
 #
 # Environment:
 #   UAT (testing) : https://uat.kwikapi.com
@@ -38,7 +37,6 @@ kwik_bill_fetch() {
     curl -s -G \
   --data-urlencode 'api_key=YOUR_API_KEY' \
   --data-urlencode 'number=CONSUMER_NUMBER' \
-  --data-urlencode 'amount=0' \
   --data-urlencode 'opid=OPERATOR_ID' \
   --data-urlencode 'order_id=YOUR_ORDER_ID' \
   --data-urlencode 'mobile=9999999999' \

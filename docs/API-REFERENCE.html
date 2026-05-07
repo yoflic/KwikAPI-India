@@ -726,7 +726,7 @@
           style="margin-left:auto;">PAY</span></a>
 
       <div class="sidebar-section-label">Verification</div>
-      <a href="#api-16" class="verify"><span class="badge">16</span> Bank Account Verify<span class="badge"
+      <a href="#api-16" class="verify"><span class="badge">16</span> Bank/UPI Verify v2<span class="badge"
           style="margin-left:auto;">VER</span></a>
 
       <div class="sidebar-section-label">Utility</div>
@@ -1054,12 +1054,6 @@
                   <td>Consumer / account / registered mobile number</td>
                 </tr>
                 <tr>
-                  <td>amount</td>
-                  <td>number</td>
-                  <td class="req-opt">Optional</td>
-                  <td>Pre-filled amount. Pass <code>0</code> if unknown</td>
-                </tr>
-                <tr>
                   <td>opid</td>
                   <td>int</td>
                   <td class="req-yes">✅ Required</td>
@@ -1080,7 +1074,7 @@
                 <tr>
                   <td>mobile</td>
                   <td>string</td>
-                  <td class="req-opt">Optional</td>
+                  <td class="req-yes">✅ Required</td>
                   <td>Customer mobile number for SMS confirmation</td>
                 </tr>
               </tbody>
@@ -1388,12 +1382,10 @@
               &nbsp;&nbsp;<span class="c-key">"message"</span>:&nbsp;<span class="c-null">null</span>,<br>
               &nbsp;&nbsp;<span class="c-key">"credit_balance"</span>:&nbsp;<span class="c-str">"499"</span>,<br>
               &nbsp;&nbsp;<span class="c-key">"details"</span>:&nbsp;{<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"provider"</span>:&nbsp;<span class="c-str">"VI"</span>,<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"opid"</span>:&nbsp;<span class="c-str">"3"</span>,<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"circle_code"</span>:&nbsp;<span
-                class="c-str">"17"</span>,<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"circle_name"</span>:&nbsp;<span class="c-str">"Bihar
-                (BR)"</span><br>
+              &nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"provider"</span>:&nbsp;<span class="c-str">"Airtel"</span>,<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"opid"</span>:&nbsp;<span class="c-str">"1"</span>,<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"circle_code"</span>:&nbsp;<span class="c-str">"5"</span>,<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"circle_name"</span>:&nbsp;<span class="c-str">"Delhi (DL)"</span><br>
               &nbsp;&nbsp;}<br>
               }
 
@@ -1592,7 +1584,7 @@
             <span class="url">/api/v2/recharge.php</span>
           </div>
           <p class="use-text">Initiate a recharge for prepaid mobile, DTH/D2H, or Datacard. Always call Operator &amp;
-            Circle Detect first to get the correct <code>opid</code> and <code>state_code</code>.</p>
+            Circle Detect first to get the correct <code>opid</code>.</p>
           <div class="table-wrap">
             <table>
               <thead>
@@ -1627,12 +1619,6 @@
                   <td>int</td>
                   <td class="req-yes">✅ Required</td>
                   <td>Operator ID from Operator &amp; Circle Detect API</td>
-                </tr>
-                <tr>
-                  <td>state_code</td>
-                  <td>string</td>
-                  <td class="req-yes">✅ Required</td>
-                  <td>Telecom circle code from Operator &amp; Circle Detect API</td>
                 </tr>
                 <tr>
                   <td>order_id</td>
@@ -1689,7 +1675,7 @@
           <div class="api-num pay">14</div>
           <div class="api-title">
             <h2>Utility Payments (BBPS)</h2>
-            <p>Process any BBPS utility bill payment — 1000+ billers</p>
+            <p>Process any BBPS utility bill payment — 22000+ billers</p>
           </div>
           <div class="api-meta">
             <span class="badge-pill method-get">GET</span>
@@ -1702,7 +1688,7 @@
             <span class="url">/api/v2/bills/payments.php</span>
           </div>
           <p class="use-text">Process utility bill payments through the BBPS network — Electricity, Water, Gas,
-            Broadband, Landline, Insurance, Loan EMIs, Education Fees and 1000+ billers.</p>
+            Broadband, Landline, Insurance, Loan EMIs, Education Fees and 22000+ billers.</p>
           <div class="table-wrap">
             <table>
               <thead>
@@ -1744,20 +1730,8 @@
                   <td class="req-yes">✅ Required</td>
                   <td>Your unique order ID — <strong>never reuse</strong></td>
                 </tr>
-                <tr class="highlight-row">
-                  <td>opt8</td>
-                  <td>string</td>
-                  <td class="req-fixed">🔒 Always "Bills"</td>
-                  <td>Must always be <code>"Bills"</code> — fixed required value</td>
-                </tr>
                 <tr>
-                  <td>opt1–opt7</td>
-                  <td>string</td>
-                  <td class="req-opt">Optional</td>
-                  <td>Operator-specific fields (see <code>required_params</code> in Biller Details)</td>
-                </tr>
-                <tr>
-                  <td>opt9–opt10</td>
+                  <td>opt1–opt10</td>
                   <td>string</td>
                   <td class="req-opt">Optional</td>
                   <td>Operator-specific fields (see <code>required_params</code> in Biller Details)</td>
@@ -1765,14 +1739,14 @@
                 <tr>
                   <td>refrence_id</td>
                   <td>string</td>
-                  <td class="req-opt">Optional</td>
-                  <td>Optional reconciliation reference</td>
+                  <td class="req-yes">✅ Required</td>
+                  <td><code>ref_id</code> from Bill Fetch response. Pass <code>0</code> if bill fetch is not supported by the biller</td>
                 </tr>
                 <tr>
                   <td>mobile</td>
                   <td>string</td>
-                  <td class="req-opt">Optional</td>
-                  <td>Customer mobile number for confirmation SMS</td>
+                  <td class="req-yes">✅ Required</td>
+                  <td>Customer mobile number for SMS confirmation</td>
                 </tr>
               </tbody>
             </table>
@@ -1815,9 +1789,9 @@
                   <td>opt7</td>
                   <td>Bill number / Reference number</td>
                 </tr>
-                <tr class="highlight-row">
+                <tr>
                   <td>opt8</td>
-                  <td><strong>Always "Bills"</strong> (fixed, required)</td>
+                  <td>Biller-specific field (see <code>required_params</code> in Biller Details)</td>
                 </tr>
                 <tr>
                   <td>opt9</td>
@@ -1917,7 +1891,7 @@
               server first, then whitelist that IP in your KwikAPI dashboard before calling this API.</div>
           </div>
           <div class="note warn"><span class="note-icon">⚠️</span>
-            <div>Always validate the beneficiary with <a href="#api-16">Bank Account Verification</a> before initiating
+            <div>Always validate the beneficiary with <a href="#api-16">Bank/UPI Account Verification v2</a> before initiating
               a payout.</div>
           </div>
         </div>
@@ -1931,8 +1905,8 @@
         <div class="api-card-header">
           <div class="api-num ver">16</div>
           <div class="api-title">
-            <h2>Bank Account Verification</h2>
-            <p>Real-time penny-drop bank account verification with name fetch</p>
+            <h2>Bank/UPI Account Verification v2</h2>
+            <p>Real-time bank account (penny-drop) and UPI/VPA address verification with name fetch</p>
           </div>
           <div class="api-meta">
             <span class="badge-pill method-post">POST</span>
@@ -1944,8 +1918,7 @@
             <span class="method-tag method-post">POST</span>
             <span class="url">/api/v2/dmt/account_validate_route2</span>
           </div>
-          <p class="use-text">Verify a bank account in real time using a penny-drop. Returns the registered account
-            holder name. Always call this before initiating a Payout.</p>
+          <p class="use-text">Verify a bank account in real time using a penny-drop, or validate a UPI/VPA address. The <code>account</code> field auto-detects the type. Returns the registered account holder name. Always call this before initiating a Payout.</p>
           <div class="table-wrap">
             <table>
               <thead>
@@ -1967,19 +1940,19 @@
                   <td>number</td>
                   <td>string</td>
                   <td class="req-yes">✅ Required</td>
-                  <td>Beneficiary bank account number</td>
+                  <td>Bank account number or UPI/VPA address</td>
                 </tr>
                 <tr>
                   <td>account</td>
                   <td>string</td>
                   <td class="req-yes">✅ Required</td>
-                  <td>Same as <code>number</code> (required field alias)</td>
+                  <td>Bank account number or UPI/VPA address — auto-detected</td>
                 </tr>
                 <tr>
                   <td>ifsc</td>
                   <td>string</td>
                   <td class="req-opt">Optional</td>
-                  <td>IFSC code for faster routing</td>
+                  <td>IFSC code for bank account routing. Not required for UPI/VPA</td>
                 </tr>
                 <tr>
                   <td>order_id</td>

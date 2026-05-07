@@ -30,18 +30,17 @@ class KwikAPIError(Exception):
     """Raised when the KwikAPI returns a non-success response."""
 
 
-def bill_fetch(api_key: str = 'YOUR_API_KEY', number: str = 'CONSUMER_NUMBER', amount: str = '0', opid: str = 'OPERATOR_ID', order_id: str = 'YOUR_ORDER_ID', mobile: str = '9999999999') -> dict[str, Any]:
+def bill_fetch(api_key: str = 'YOUR_API_KEY', number: str = 'CONSUMER_NUMBER', opid: str = 'OPERATOR_ID', order_id: str = 'YOUR_ORDER_ID', mobile: str = '9999999999') -> dict[str, Any]:
     """
     Bill Fetch
 
     Args:
         api_key (string): Required. Your KwikAPI API key
         number (string): Required. Consumer number / account number / registered mobile
-        amount (number): Optional. Pre-filled amount (pass 0 if unknown)
         opid (int): Required. Operator ID from Biller List API
         order_id (string): Required. Your unique order/reference ID
         opt1-opt10 (string): Optional. Additional operator-specific fields (see Biller Details)
-        mobile (string): Optional. Customer mobile number for SMS confirmation
+        mobile (string): Required. Customer mobile number for SMS confirmation
 
     Returns:
         dict: Parsed JSON response from KwikAPI.
@@ -54,7 +53,7 @@ def bill_fetch(api_key: str = 'YOUR_API_KEY', number: str = 'CONSUMER_NUMBER', a
 
     with requests.Session() as session:
         session.headers.update({"Accept": "application/json"})
-        response = session.get(url, params={'api_key': api_key, 'number': number, 'amount': amount, 'opid': opid, 'order_id': order_id, 'mobile': mobile})
+        response = session.get(url, params={'api_key': api_key, 'number': number, 'opid': opid, 'order_id': order_id, 'mobile': mobile})
 
     response.raise_for_status()
     data = response.json()

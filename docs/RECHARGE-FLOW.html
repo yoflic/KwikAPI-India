@@ -943,13 +943,11 @@
         </div>
       </div>
       <div class="step-body">
-        <p class="step-desc">Pass the <code>opid</code> (from Step 5) and <code>state_code</code> (from Step 5) to get
-          all available plans for that operator and circle.</p>
+        <p class="step-desc">Pass the <code>opid</code> (from Step 5) to get all available plans for that operator and circle.</p>
         <div class="code-block">
           <div class="code-label">Input → Output</div>
           <span class="code-cmt">// Input</span>
-          { <span class="code-key">opid</span>: <span class="code-str">"1"</span>, <span
-            class="code-key">state_code</span>: <span class="code-str">"MH"</span> }
+          { <span class="code-key">opid</span>: <span class="code-str">"1"</span> }
 
           <span class="code-cmt">// Output</span>
           <span class="code-key">plans</span>[] → {
@@ -987,8 +985,6 @@
             manual entry</span>
           <span class="code-key">opid</span>: <span class="code-str">"1"</span>, <span class="code-cmt">← from Operator
             Detect (Step 5)</span>
-          <span class="code-key">state_code</span>: <span class="code-str">"MH"</span>, <span class="code-cmt">← from
-            Operator Detect (Step 5)</span>
           <span class="code-key">order_id</span>: <span class="code-str">"ORD-20260506-001"</span> <span
             class="code-cmt">← your unique order ID (never reuse)</span>
           }
@@ -1104,8 +1100,7 @@
               <path d="M9 0v20M2 14l7 10 7-10" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" />
             </svg></div>
           <div class="flow-node">
-            <div class="flow-box live-box"><span>5</span> Operator &amp; Circle Detect <span class="fn">→ opid +
-                state_code</span></div>
+            <div class="flow-box live-box"><span>5</span> Operator &amp; Circle Detect <span class="fn">→ opid</span></div>
           </div>
           <div class="flow-arrow"><svg width="18" height="28" viewBox="0 0 18 28" fill="none">
               <path d="M9 0v20M2 14l7 10 7-10" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" />

@@ -966,16 +966,13 @@
           <span class="code-key">api_key</span>: <span class="code-str">"YOUR_API_KEY"</span>,
           <span class="code-key">number</span>: <span class="code-str">"1234567890"</span>, <span class="code-cmt">←
             consumer / account / registered number</span>
-          <span class="code-key">amount</span>: <span class="code-str">0</span>, <span class="code-cmt">← pass 0 if
-            unknown</span>
           <span class="code-key">opid</span>: <span class="code-str">"53"</span>, <span class="code-cmt">← from Biller
             List (Step 2)</span>
           <span class="code-key">order_id</span>: <span class="code-str">"FETCH-001"</span>, <span class="code-cmt">←
             unique reference for this fetch</span>
           <span class="code-key">opt1</span>: <span class="code-str">"1234567890"</span>, <span class="code-cmt">← as
             required by biller (Step 3)</span>
-          <span class="code-key">mobile</span>: <span class="code-str">"9876543210"</span> <span class="code-cmt">←
-            optional</span>
+          <span class="code-key">mobile</span>: <span class="code-str">"9876543210"</span> <span class="code-cmt">← required</span>
           }
         </div>
         <div class="code-block">
@@ -984,7 +981,8 @@
           <span class="code-key">due_amount</span>: <span class="code-str">1450.00</span>,
           <span class="code-key">due_date</span>: <span class="code-str">"2026-05-15"</span>,
           <span class="code-key">consumer_name</span>: <span class="code-str">"Vivek Sharma"</span>,
-          <span class="code-key">bill_period</span>: <span class="code-str">"APR-2026"</span>
+          <span class="code-key">bill_period</span>: <span class="code-str">"APR-2026"</span>,
+          <span class="code-key">ref_id</span>: <span class="code-str">"61936"</span> <span class="code-cmt">← pass as refrence_id in payment</span>
           }
         </div>
         <div class="info-box">
@@ -1024,16 +1022,11 @@
             class="code-cmt">← unique, never reuse</span>
           <span class="code-key">opt1</span>: <span class="code-str">"1234567890"</span>, <span class="code-cmt">←
             consumer number (from Step 3)</span>
-          <span class="code-key">opt8</span>: <span class="code-str">"Bills"</span>, <span class="code-cmt">← ALWAYS
-            "Bills" (fixed, required)</span>
-          <span class="code-key">refrence_id</span>: <span class="code-str">"REF-001"</span>, <span class="code-cmt">←
-            optional reconciliation reference</span>
-          <span class="code-key">mobile</span>: <span class="code-str">"9876543210"</span> <span class="code-cmt">←
-            optional, confirmation SMS</span>
+          <span class="code-key">refrence_id</span>: <span class="code-str">"61936"</span>, <span class="code-cmt">← ref_id from Bill Fetch; pass 0 if bill fetch not supported</span>
+          <span class="code-key">mobile</span>: <span class="code-str">"9876543210"</span> <span class="code-cmt">← required, confirmation SMS</span>
           }
         </div>
-        <div class="warn-box">⚠️ <code>opt8</code> must always be set to <code>"Bills"</code> — this is a fixed required
-          value, not optional.<br>Generate a unique <code>order_id</code> for every transaction. Never reuse one.</div>
+        <div class="warn-box">⚠️ Generate a unique <code>order_id</code> for every transaction. Never reuse one.</div>
         <div class="code-block">
           <div class="code-label">Response</div>
           {
@@ -1122,8 +1115,7 @@
               <path d="M9 0v20M2 14l7 10 7-10" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" />
             </svg></div>
           <div class="flow-node">
-            <div class="flow-box payment-box"><span>5</span> Utility Payment (BBPS) <span class="fn">opt8="Bills"</span>
-            </div>
+            <div class="flow-box payment-box"><span>5</span> Utility Payment (BBPS)</div>
           </div>
           <div class="flow-arrow"><svg width="18" height="28" viewBox="0 0 18 28" fill="none">
               <path d="M9 0v20M2 14l7 10 7-10" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" />
@@ -1181,9 +1173,9 @@
           <td><code>opt7</code></td>
           <td>Bill number / Reference number</td>
         </tr>
-        <tr class="opt-highlight">
+        <tr>
           <td><code>opt8</code></td>
-          <td><strong>Always <code>"Bills"</code></strong> — fixed required value</td>
+          <td>Biller-specific field (see <code>required_params</code> in Biller Details)</td>
         </tr>
         <tr>
           <td><code>opt9</code></td>

@@ -15,7 +15,6 @@
 #   number             (required) Mobile/DTH subscriber number
 #   amount             (required) Recharge amount in INR
 #   opid               (required) Operator ID from Biller List / Operator Detect API
-#   state_code         (required) Telecom circle code (for mobile prepaid)
 #   order_id           (required) Your unique order ID (must be unique per transaction)
 #
 # Environment:
@@ -40,7 +39,6 @@ kwik_prepaid_dth_recharge() {
   --data-urlencode 'number=9999999999' \
   --data-urlencode 'amount=199' \
   --data-urlencode 'opid=OPERATOR_ID' \
-  --data-urlencode 'state_code=4' \
   --data-urlencode 'order_id=YOUR_UNIQUE_ORDER_ID' \
   "${BASE_URL}/api/v2/recharge.php"
   )

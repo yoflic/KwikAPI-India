@@ -31,7 +31,7 @@ class KwikAPIError(Exception):
     """Raised when the KwikAPI returns a non-success response."""
 
 
-def prepaid_dth_recharge(api_key: str = 'YOUR_API_KEY', number: str = '9999999999', amount: str = '199', opid: str = 'OPERATOR_ID', state_code: str = '4', order_id: str = 'YOUR_UNIQUE_ORDER_ID') -> dict[str, Any]:
+def prepaid_dth_recharge(api_key: str = 'YOUR_API_KEY', number: str = '9999999999', amount: str = '199', opid: str = 'OPERATOR_ID', order_id: str = 'YOUR_UNIQUE_ORDER_ID') -> dict[str, Any]:
     """
     Prepaid / DTH Recharge
 
@@ -40,7 +40,6 @@ def prepaid_dth_recharge(api_key: str = 'YOUR_API_KEY', number: str = '999999999
         number (string): Required. Mobile/DTH subscriber number
         amount (number): Required. Recharge amount in INR
         opid (int): Required. Operator ID from Biller List / Operator Detect API
-        state_code (string): Required. Telecom circle code (for mobile prepaid)
         order_id (string): Required. Your unique order ID (must be unique per transaction)
 
     Returns:
@@ -54,7 +53,7 @@ def prepaid_dth_recharge(api_key: str = 'YOUR_API_KEY', number: str = '999999999
 
     with requests.Session() as session:
         session.headers.update({"Accept": "application/json"})
-        response = session.get(url, params={'api_key': api_key, 'number': number, 'amount': amount, 'opid': opid, 'state_code': state_code, 'order_id': order_id})
+        response = session.get(url, params={'api_key': api_key, 'number': number, 'amount': amount, 'opid': opid, 'order_id': order_id})
 
     response.raise_for_status()
     data = response.json()

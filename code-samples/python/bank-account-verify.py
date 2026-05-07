@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-KwikAPI SDK — Bank Account Verification
+KwikAPI SDK — Bank/UPI Account Verification v2
 ─────────────────────────────────────────────────────────────────────────────
-Validates a bank account by performing a real-time penny-drop verification. Returns the registered account holder name, account status (active/inactive), and bank details. Always call this before initiating a Payout to avoid failed transfers due to incorrect account details. Supports optional IFSC for faster routing.
+Validates a bank account via real-time penny-drop or verifies a UPI/VPA address. Returns the registered account holder name and account status. The account field auto-detects whether the input is a bank account number or UPI/VPA. Always call this before initiating a Payout.
 
 Endpoint  : POST /api/v2/dmt/account_validate_route2
 Group     : Verification APIs
@@ -32,13 +32,13 @@ class KwikAPIError(Exception):
 
 def bank_account_verify(api_key: str = 'YOUR_API_KEY', number: str = 'ACCOUNT_NUMBER', account: str = 'ACCOUNT_NUMBER', ifsc: str = 'SBIN0001234', order_id: str = 'YOUR_UNIQUE_ORDER_ID') -> dict[str, Any]:
     """
-    Bank Account Verification
+    Bank/UPI Account Verification v2
 
     Args:
         api_key (string): Required. Your KwikAPI API key
-        number (string): Required. Beneficiary bank account number
-        account (string): Required. Same as number (required field alias)
-        ifsc (string): Optional. IFSC code for faster verification (optional)
+        number (string): Required. Bank account number or UPI/VPA address
+        account (string): Required. Bank account number or UPI/VPA address — auto-detected
+        ifsc (string): Optional. IFSC code for bank account routing; not required for UPI/VPA
         order_id (string): Required. Your unique order ID for this verification
 
     Returns:

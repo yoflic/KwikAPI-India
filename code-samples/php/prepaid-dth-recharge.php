@@ -15,7 +15,6 @@
  *   @param  string   $number           (required)  Mobile/DTH subscriber number
  *   @param  number   $amount           (required)  Recharge amount in INR
  *   @param  int      $opid             (required)  Operator ID from Biller List / Operator Detect API
- *   @param  string   $state_code       (required)  Telecom circle code (for mobile prepaid)
  *   @param  string   $order_id         (required)  Your unique order ID (must be unique per transaction)
  *
  * @return array  Decoded JSON response from KwikAPI
@@ -38,14 +37,13 @@ define('KWIKAPI_KEY', 'YOUR_API_KEY');
  *   @param  string   $number           (required)  Mobile/DTH subscriber number
  *   @param  number   $amount           (required)  Recharge amount in INR
  *   @param  int      $opid             (required)  Operator ID from Biller List / Operator Detect API
- *   @param  string   $state_code       (required)  Telecom circle code (for mobile prepaid)
  *   @param  string   $order_id         (required)  Your unique order ID (must be unique per transaction)
  * @return array
  * @throws RuntimeException
  */
-function kwik_prepaid_dth_recharge(string $apiKey = KWIKAPI_KEY, string $number = '9999999999', string $amount = '199', string $opid = 'OPERATOR_ID', string $state_code = '4', string $order_id = 'YOUR_UNIQUE_ORDER_ID'): array
+function kwik_prepaid_dth_recharge(string $apiKey = KWIKAPI_KEY, string $number = '9999999999', string $amount = '199', string $opid = 'OPERATOR_ID', string $order_id = 'YOUR_UNIQUE_ORDER_ID'): array
 {
-    $queryString = http_build_query(['api_key' => $apiKey, 'number' => $number, 'amount' => $amount, 'opid' => $opid, 'state_code' => $state_code, 'order_id' => $order_id]);
+    $queryString = http_build_query(['api_key' => $apiKey, 'number' => $number, 'amount' => $amount, 'opid' => $opid, 'order_id' => $order_id]);
     $ch = curl_init();
     curl_setopt_array($ch, [
         CURLOPT_URL            => 'https://uat.kwikapi.com/api/v2/recharge.php?' . $queryString,

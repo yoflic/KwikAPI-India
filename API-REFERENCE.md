@@ -28,7 +28,7 @@
 15. [Payout (Money Transfer)](#15-payout-money-transfer)
 
 **Verification APIs**
-16. [Bank Account Verification](#16-bank-account-verification)
+16. [Bank/UPI Account Verification v2](#16-bankupi-account-verification-v2)
 
 **Utility APIs**
 17. [IP Detect](#17-ip-detect)
@@ -186,11 +186,10 @@
 |-----------|------|----------|-------------|
 | `api_key` | string | ✅ Required | Your KwikAPI API key |
 | `number` | string | ✅ Required | Consumer / account / registered mobile number |
-| `amount` | number | Optional | Pre-filled amount. Pass `0` if unknown |
 | `opid` | int | ✅ Required | Operator ID from Biller List API |
 | `order_id` | string | ✅ Required | Your unique reference ID for this fetch request |
 | `opt1`–`opt10` | string | Optional | Additional operator-specific fields (see `required_params` in Biller Details) |
-| `mobile` | string | Optional | Customer mobile number for SMS confirmation |
+| `mobile` | string | ✅ Required | Customer mobile number for SMS confirmation |
 
 #### Sample Response
 
@@ -335,10 +334,10 @@
   "message": null,
   "credit_balance": "499",
   "details": {
-    "provider": "VI",
-    "opid": "3",
-    "circle_code": "17",
-    "circle_name": "Bihar (BR)"
+    "provider": "Airtel",
+    "opid": "1",
+    "circle_code": "5",
+    "circle_name": "Delhi (DL)"
   }
 }
 ```
@@ -482,7 +481,6 @@
 | `number` | string | ✅ Required | Customer mobile number or DTH subscriber ID |
 | `amount` | number | ✅ Required | Recharge amount in INR |
 | `opid` | int | ✅ Required | Operator ID from Operator & Circle Detect API |
-| `state_code` | string | ✅ Required | Telecom circle code from Operator & Circle Detect API |
 | `order_id` | string | ✅ Required | Your unique order ID — **never reuse** |
 
 #### Sample Response
@@ -511,7 +509,7 @@
 
 **Endpoint:** `GET /api/v2/bills/payments.php`  
 **Rate Limit:** Per account  
-**Use:** Process any BBPS utility bill payment — Electricity, Water, Gas, Broadband, Landline, Insurance, Loan EMI, Education Fees, and 1000+ more billers.
+**Use:** Process any BBPS utility bill payment — Electricity, Water, Gas, Broadband, Landline, Insurance, Loan EMI, Education Fees, and 22000+ more billers.
 
 #### Request Parameters
 
@@ -522,10 +520,9 @@
 | `amount` | number | ✅ Required | Bill amount in INR |
 | `opid` | int | ✅ Required | Operator ID from Biller List API |
 | `order_id` | string | ✅ Required | Your unique order ID — **never reuse** |
-| `opt8` | string | ✅ Required | **Must always be `"Bills"`** — fixed required value |
-| `opt1`–`opt7`, `opt9`–`opt10` | string | Optional | Operator-specific additional fields (see `required_params` in Biller Details) |
-| `refrence_id` | string | Optional | Optional reconciliation reference |
-| `mobile` | string | Optional | Customer mobile number for confirmation SMS |
+| `opt1`–`opt10` | string | Optional | Operator-specific additional fields (see `required_params` in Biller Details) |
+| `refrence_id` | string | ✅ Required | `ref_id` from Bill Fetch response. Pass `0` if bill fetch is not supported by the biller |
+| `mobile` | string | ✅ Required | Customer mobile number for SMS confirmation |
 
 #### opt1–opt10 Common Mapping
 
@@ -538,7 +535,7 @@
 | `opt5` | District / Sub-division / Zone |
 | `opt6` | Bill date / Due date |
 | `opt7` | Bill number / Reference number |
-| `opt8` | **Always `"Bills"`** (fixed, required) |
+| `opt8` | Biller-specific field (see `required_params` in Biller Details) |
 | `opt9` | Service type / Category |
 | `opt10` | Additional biller-specific field |
 
@@ -573,7 +570,7 @@
 **Rate Limit:** Per account  
 **Use:** Initiate a bank account payout via IMPS/NEFT.  
 ⚠️ **IP whitelisting required** — run [IP Detect](#17-ip-detect) on your production server first and whitelist the IP in your KwikAPI dashboard.  
-⚠️ Always validate the beneficiary with [Bank Account Verification](#16-bank-account-verification) before payout.
+⚠️ Always validate the beneficiary with [Bank/UPI Account Verification v2](#16-bankupi-account-verification-v2) before payout.
 
 #### Request Parameters
 
@@ -610,20 +607,20 @@
 
 ---
 
-### 16. Bank Account Verification
+### 16. Bank/UPI Account Verification v2
 
 **Endpoint:** `POST /api/v2/dmt/account_validate_route2`  
 **Rate Limit:** Per account  
-**Use:** Real-time penny-drop verification of a bank account. Returns registered account holder name and account status. Always call this before Payout.
+**Use:** Real-time verification of a bank account (penny-drop) or UPI/VPA address. Returns the registered account holder name and account status. Always call this before Payout.
 
 #### Request Parameters
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `api_key` | string | ✅ Required | Your KwikAPI API key |
-| `number` | string | ✅ Required | Beneficiary bank account number |
-| `account` | string | ✅ Required | Same as `number` (required field alias) |
-| `ifsc` | string | Optional | IFSC code for faster routing |
+| `number` | string | ✅ Required | Bank account number or UPI/VPA address |
+| `account` | string | ✅ Required | Bank account number or UPI/VPA address — auto-detected |
+| `ifsc` | string | Optional | IFSC code for bank account routing. Not required for UPI/VPA |
 | `order_id` | string | ✅ Required | Your unique order ID for this verification |
 
 #### Sample Response

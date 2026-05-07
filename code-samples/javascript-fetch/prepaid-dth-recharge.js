@@ -33,18 +33,16 @@ const BASE_URL = 'https://uat.kwikapi.com'; // Switch to https://www.kwikapi.com
  * @param {string} number - (required) Mobile/DTH subscriber number
  * @param {number} amount - (required) Recharge amount in INR
  * @param {int} opid - (required) Operator ID from Biller List / Operator Detect API
- * @param {string} state_code - (required) Telecom circle code (for mobile prepaid)
  * @param {string} order_id - (required) Your unique order ID (must be unique per transaction)
  * @returns {Promise<object>}
  */
-async function prepaidDthRecharge(api_key = 'YOUR_API_KEY', number = '9999999999', amount = '199', opid = 'OPERATOR_ID', state_code = '4', order_id = 'YOUR_UNIQUE_ORDER_ID') {
+async function prepaidDthRecharge(api_key = 'YOUR_API_KEY', number = '9999999999', amount = '199', opid = 'OPERATOR_ID', order_id = 'YOUR_UNIQUE_ORDER_ID') {
   try {
   const params = new URLSearchParams();
     params.append('api_key', api_key);
     params.append('number', number);
     params.append('amount', amount);
     params.append('opid', opid);
-    params.append('state_code', state_code);
     params.append('order_id', order_id);
 
   const response = await fetch(`https://uat.kwikapi.com/api/v2/recharge.php?${params.toString()}`, {

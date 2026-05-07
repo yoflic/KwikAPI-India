@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # ─────────────────────────────────────────────────────────────────────────────
-# KwikAPI SDK — Bank Account Verification
+# KwikAPI SDK — Bank/UPI Account Verification v2
 # ─────────────────────────────────────────────────────────────────────────────
-# Validates a bank account by performing a real-time penny-drop verification. Returns the registered account holder name, account status (active/inactive), and bank details. Always call this before initiating a Payout to avoid failed transfers due to incorrect account details. Supports optional IFSC for faster routing.
+# Validates a bank account via real-time penny-drop or verifies a UPI/VPA address. Returns the registered account holder name and account status. The account field auto-detects whether the input is a bank account number or UPI/VPA. Always call this before initiating a Payout.
 #
 # Endpoint  : POST /api/v2/dmt/account_validate_route2
 # Group     : Verification APIs
@@ -11,9 +11,9 @@
 #
 # Parameters:
 #   api_key            (required) Your KwikAPI API key
-#   number             (required) Beneficiary bank account number
-#   account            (required) Same as number (required field alias)
-#   ifsc               (optional) IFSC code for faster verification
+#   number             (required) Bank account number or UPI/VPA address
+#   account            (required) Bank account number or UPI/VPA address — auto-detected
+#   ifsc               (optional) IFSC code for bank account routing; not required for UPI/VPA
 #   order_id           (required) Your unique order ID for this verification
 #
 # Environment:
@@ -46,5 +46,5 @@ kwik_bank_account_verify() {
 }
 
 # ── Run ───────────────────────────────────────────────────────────────────────
-echo "Calling: Bank Account Verification"
+echo "Calling: Bank/UPI Account Verification v2"
 kwik_bank_account_verify

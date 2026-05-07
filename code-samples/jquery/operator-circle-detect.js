@@ -1,7 +1,7 @@
 /**
  * KwikAPI SDK — Operator & Circle Detect
  * ─────────────────────────────────────────────────────────────────────────────
- * Detects the mobile operator and telecom circle for any given 10-digit Indian mobile number in real time. Fully supports MNP (Mobile Number Portability) and circle-changed numbers. Always call this before initiating a prepaid mobile recharge to ensure the correct operator and state_code are passed.
+ * Detects the mobile operator and telecom circle for any given 10-digit Indian mobile number in real time. Fully supports MNP (Mobile Number Portability) and circle-changed numbers. Always call this before initiating a prepaid mobile recharge to ensure the correct operator and opid are passed.
  *
  * Endpoint  : POST /api/v2/operator_fetch_v2.php
  * Group     : Fetching APIs

@@ -29,12 +29,11 @@ const BASE_URL = 'https://uat.kwikapi.com'; // Switch to https://www.kwikapi.com
  * @param {string} number - (required) Mobile/DTH subscriber number
  * @param {number} amount - (required) Recharge amount in INR
  * @param {int} opid - (required) Operator ID from Biller List / Operator Detect API
- * @param {string} state_code - (required) Telecom circle code (for mobile prepaid)
  * @param {string} order_id - (required) Your unique order ID (must be unique per transaction)
  * @returns {Promise<object>} Parsed JSON response
  * @throws {Error} on HTTP or API-level error
  */
-async function prepaidDthRecharge(api_key = 'YOUR_API_KEY', number = '9999999999', amount = '199', opid = 'OPERATOR_ID', state_code = '4', order_id = 'YOUR_UNIQUE_ORDER_ID') {
+async function prepaidDthRecharge(api_key = 'YOUR_API_KEY', number = '9999999999', amount = '199', opid = 'OPERATOR_ID', order_id = 'YOUR_UNIQUE_ORDER_ID') {
   try {
   const response = await axios.get(`${BASE_URL}/api/v2/recharge.php`, {
     params: {
@@ -42,7 +41,6 @@ async function prepaidDthRecharge(api_key = 'YOUR_API_KEY', number = '9999999999
     number: number,
     amount: amount,
     opid: opid,
-    state_code: state_code,
     order_id: order_id,
     },
     headers: { Accept: 'application/json' },

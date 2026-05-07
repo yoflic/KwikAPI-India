@@ -2,12 +2,11 @@
 """
 KwikAPI SDK — Utility Payments (BBPS)
 ─────────────────────────────────────────────────────────────────────────────
-Processes all BBPS (Bharat Bill Payment System) utility bill payments — including Electricity, Water, Gas, Broadband, Landline, DTH, Insurance, Loan EMI, and more. Always pass opt8='Bills' as required by the API. Pass additional operator-specific fields (opt1–opt10) as indicated in the Biller Details response. After submission, always confirm final status via Transaction Status API.
+Processes all BBPS (Bharat Bill Payment System) utility bill payments — including Electricity, Water, Gas, Broadband, Landline, DTH, Insurance, Loan EMI, and more. Pass additional operator-specific fields (opt1–opt10) as indicated in the Biller Details response. After submission, always confirm final status via Transaction Status API.
 
 Endpoint  : GET /api/v2/bills/payments.php
 Group     : Payment APIs
 Rate Limit: Per account
-    # NOTE: opt8 must always be 'Bills'.
     # NOTE: Always verify final status via Transaction Status API.
 
 Requirements:
@@ -31,7 +30,7 @@ class KwikAPIError(Exception):
     """Raised when the KwikAPI returns a non-success response."""
 
 
-def utility_payments(api_key: str = 'YOUR_API_KEY', number: str = 'CONSUMER_NUMBER', amount: str = '500', opid: str = 'OPERATOR_ID', order_id: str = 'YOUR_UNIQUE_ORDER_ID', opt8: str = 'Bills', mobile: str = '9999999999') -> dict[str, Any]:
+def utility_payments(api_key: str = 'YOUR_API_KEY', number: str = 'CONSUMER_NUMBER', amount: str = '500', opid: str = 'OPERATOR_ID', order_id: str = 'YOUR_UNIQUE_ORDER_ID', mobile: str = '9999999999') -> dict[str, Any]:
     """
     Utility Payments (BBPS)
 
@@ -42,9 +41,8 @@ def utility_payments(api_key: str = 'YOUR_API_KEY', number: str = 'CONSUMER_NUMB
         opid (int): Required. Operator ID from Biller List API
         order_id (string): Required. Your unique order ID
         opt1–opt10 (string): Optional. Operator-specific additional fields (see Biller Details)
-        opt8 (string): Required. Must always be 'Bills'
-        refrence_id (string): Optional. Optional reference ID for reconciliation
-        mobile (string): Optional. Customer mobile for confirmation SMS
+        refrence_id (string): Required. ref_id from Bill Fetch response; pass '0' if bill fetch is not supported
+        mobile (string): Required. Customer mobile number for SMS confirmation
 
     Returns:
         dict: Parsed JSON response from KwikAPI.
@@ -57,7 +55,7 @@ def utility_payments(api_key: str = 'YOUR_API_KEY', number: str = 'CONSUMER_NUMB
 
     with requests.Session() as session:
         session.headers.update({"Accept": "application/json"})
-        response = session.get(url, params={'api_key': api_key, 'number': number, 'amount': amount, 'opid': opid, 'order_id': order_id, 'opt8': opt8, 'mobile': mobile})
+        response = session.get(url, params={'api_key': api_key, 'number': number, 'amount': amount, 'opid': opid, 'order_id': order_id, 'mobile': mobile})
 
     response.raise_for_status()
     data = response.json()

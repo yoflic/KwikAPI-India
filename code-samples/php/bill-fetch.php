@@ -12,11 +12,10 @@
  * Parameters:
  *   @param  string   $api_key          (required)  Your KwikAPI API key
  *   @param  string   $number           (required)  Consumer number / account number / registered mobile
- *   @param  number   $amount           (optional)  Pre-filled amount (pass 0 if unknown)
  *   @param  int      $opid             (required)  Operator ID from Biller List API
  *   @param  string   $order_id         (required)  Your unique order/reference ID
  *   @param  string   $opt1-opt10       (optional)  Additional operator-specific fields (see Biller Details)
- *   @param  string   $mobile           (optional)  Customer mobile number for SMS confirmation
+ *   @param  string   $mobile           (required)  Customer mobile number for SMS confirmation
  *
  * @return array  Decoded JSON response from KwikAPI
  * @throws RuntimeException  on cURL failure or invalid JSON response
@@ -36,17 +35,16 @@ define('KWIKAPI_KEY', 'YOUR_API_KEY');
  *
  *   @param  string   $api_key          (required)  Your KwikAPI API key
  *   @param  string   $number           (required)  Consumer number / account number / registered mobile
- *   @param  number   $amount           (optional)  Pre-filled amount (pass 0 if unknown)
  *   @param  int      $opid             (required)  Operator ID from Biller List API
  *   @param  string   $order_id         (required)  Your unique order/reference ID
  *   @param  string   $opt1-opt10       (optional)  Additional operator-specific fields (see Biller Details)
- *   @param  string   $mobile           (optional)  Customer mobile number for SMS confirmation
+ *   @param  string   $mobile           (required)  Customer mobile number for SMS confirmation
  * @return array
  * @throws RuntimeException
  */
-function kwik_bill_fetch(string $apiKey = KWIKAPI_KEY, string $number = 'CONSUMER_NUMBER', string $amount = '0', string $opid = 'OPERATOR_ID', string $order_id = 'YOUR_ORDER_ID', string $mobile = '9999999999'): array
+function kwik_bill_fetch(string $apiKey = KWIKAPI_KEY, string $number = 'CONSUMER_NUMBER', string $opid = 'OPERATOR_ID', string $order_id = 'YOUR_ORDER_ID', string $mobile = '9999999999'): array
 {
-    $queryString = http_build_query(['api_key' => $apiKey, 'number' => $number, 'amount' => $amount, 'opid' => $opid, 'order_id' => $order_id, 'mobile' => $mobile]);
+    $queryString = http_build_query(['api_key' => $apiKey, 'number' => $number, 'opid' => $opid, 'order_id' => $order_id, 'mobile' => $mobile]);
     $ch = curl_init();
     curl_setopt_array($ch, [
         CURLOPT_URL            => 'https://uat.kwikapi.com/api/v2/bills/validation.php?' . $queryString,
@@ -75,7 +73,7 @@ function kwik_bill_fetch(string $apiKey = KWIKAPI_KEY, string $number = 'CONSUME
 
 // ── Example usage ─────────────────────────────────────────────────────────────
 try {
-    $result = kwik_bill_fetch(KWIKAPI_KEY, 'CONSUMER_NUMBER', '0', 'OPERATOR_ID', 'YOUR_ORDER_ID', '9999999999');
+    $result = kwik_bill_fetch(KWIKAPI_KEY, 'CONSUMER_NUMBER', 'OPERATOR_ID', 'YOUR_ORDER_ID', '9999999999');
 
     if (($result['status'] ?? '') === 'SUCCESS') {
         echo "Success: " . ($result['message'] ?? 'OK') . PHP_EOL;
